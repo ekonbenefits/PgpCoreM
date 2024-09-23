@@ -464,7 +464,7 @@ namespace PgpCoreM
 				_encryptKeys = new Lazy<IEnumerable<PgpPublicKey>>(() =>
 					publicKeyRings.SelectMany(Utilities.SortBestEncryptionKey).ToArray());
 				_verificationKeys = new Lazy<IEnumerable<PgpPublicKey>>(() =>
-					publicKeyRings.SelectMany(Utilities.SortBestEncryptionKey).ToArray());
+					publicKeyRings.SelectMany(Utilities.SortBestVerificationKey).ToArray());
 			}
 
 			if (_secretKeys != null)

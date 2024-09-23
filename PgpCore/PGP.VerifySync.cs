@@ -284,7 +284,27 @@ namespace PgpCoreM
                     // Get public key from correctly positioned stream and initialise for verification
                     PgpObjectFactory pgpObjectFactory = new PgpObjectFactory(armoredInputStream);
                     PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpObjectFactory.NextPgpObject();
-                    PgpSignature pgpSignature = pgpSignatureList[0];
+                    PgpSignature pgpSignature = null;
+                    for (int i = 0; i < pgpSignatureList.Count; i++)
+                    {
+                        foreach (var key in EncryptionKeys.VerificationKeys)
+                        {
+                            if (pgpSignatureList[i].KeyId == key.KeyId)
+                            {
+                                pgpSignature = pgpSignatureList[i];
+                                break;
+                            }
+                        }
+                        if (pgpSignature != null)
+                            break;
+
+                       
+                    }
+
+                    if (pgpSignature == null)
+                    {
+                        return false;
+                    }
 
                     pgpSignature.InitVerify(EncryptionKeys.VerificationKeys.First());
 
