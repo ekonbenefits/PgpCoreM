@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PgpCore", "PgpCore\PgpCore.csproj", "{109C82AE-0229-494D-845F-828B61C712E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PgpCoreM", "PgpCore\PgpCoreM.csproj", "{109C82AE-0229-494D-845F-828B61C712E6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PgpCore.Tests", "PgpCore.Tests\PgpCore.Tests.csproj", "{9F70E456-1511-4466-B805-6D0AABC48AD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PgpCoreM.Tests", "PgpCore.Tests\PgpCoreM.Tests.csproj", "{9F70E456-1511-4466-B805-6D0AABC48AD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
