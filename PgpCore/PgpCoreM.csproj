@@ -2,35 +2,28 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>.NET Standard class library for using PGP</Description>
-    <Authors>mattosaurus</Authors>
+    <Description>.NET Standard class library for using PGP modified from PGPCore</Description>
+    <Authors>ekonbenefits</Authors>
     <Company />
-    <Product>PgpCore</Product>
+    <Product>PgpCoreM</Product>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/mattosaurus/PgpCore</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/mattosaurus/PgpCore</RepositoryUrl>
-    <PackageTags>PGP .NET Core</PackageTags>
-    <Version>6.5.1.0</Version>
-    <AssemblyVersion>6.0.0.0</AssemblyVersion>
-    <FileVersion>6.5.1</FileVersion>
-    <PackageReleaseNotes>v6.5.1 - Make publioc key in place of private key wrrors more obvious</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/ekonbenefits/PgpCoreM</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ekonbenefits/PgpCoreM</RepositoryUrl>
+    <PackageTags>PGP .NET Core Modified</PackageTags>
+    <Version>7.0.0.0</Version>
+    <AssemblyVersion>7.0.0.0</AssemblyVersion>
+    <FileVersion>7.0.0</FileVersion>
+    <PackageReleaseNotes>v7.0.0 - Safer defaults than pgp core, major refactoring of properties</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>PgpCoreKey.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>False</SignAssembly>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
+
 
   <ItemGroup>
     <None Include="..\README.md">
