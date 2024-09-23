@@ -462,9 +462,9 @@ namespace PgpCoreM
 				_masterKey = new Lazy<PgpPublicKey>(() =>
 					Utilities.FindMasterKey(publicKeyRings.First()));
 				_encryptKeys = new Lazy<IEnumerable<PgpPublicKey>>(() =>
-					publicKeyRings.Select(Utilities.FindBestEncryptionKey).ToArray());
+					publicKeyRings.SelectMany(Utilities.SortBestEncryptionKey).ToArray());
 				_verificationKeys = new Lazy<IEnumerable<PgpPublicKey>>(() =>
-					publicKeyRings.Select(Utilities.FindBestVerificationKey).ToArray());
+					publicKeyRings.SelectMany(Utilities.SortBestEncryptionKey).ToArray());
 			}
 
 			if (_secretKeys != null)

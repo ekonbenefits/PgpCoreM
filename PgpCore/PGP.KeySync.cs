@@ -137,9 +137,10 @@ namespace PgpCoreM
             keyRingGen.AddSubKey(encKey, encHashGen.Generate(), null);
             
 
-            PgpSecretKeyRing secretKeyRing = keyRingGen.GenerateSecretKeyRing();
+            var secretKeyRing = keyRingGen.GenerateSecretKeyRing();
+            var pubKeyRing = keyRingGen.GeneratePublicKeyRing();
 
-            ExportKeyPair(privateKeyStream, publicKeyStream, secretKeyRing.GetSecretKey(), armor, emitVersion);
+            ExportKeyPair(privateKeyStream, publicKeyStream, secretKeyRing, pubKeyRing, armor, emitVersion);
         }
     }
 }

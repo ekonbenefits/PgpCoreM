@@ -474,12 +474,22 @@ namespace PgpCoreM
 		{
 			var encryptedDataGenerator =
 				new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
-
+            bool encryptionRun = false;
 			foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in EncryptionKeys.PublicKeyRings)
 			{
 				PgpPublicKey publicKey = publicKeyRing.PreferredEncryptionKey ?? publicKeyRing.DefaultEncryptionKey;
+                if (publicKey == null)
+                {
+                    continue;
+                }
 				encryptedDataGenerator.AddMethod(publicKey);
+				encryptionRun = true;
 			}
+
+            if (!encryptionRun)
+            {
+                throw new ArgumentException("No encryption key specified in public key ring.");
+            }
 
 			return encryptedDataGenerator.Open(outputStream, new byte[BufferSize]);
 		}
@@ -579,7 +589,8 @@ namespace PgpCoreM
 		private void ExportKeyPair(
 			Stream secretOut,
 			Stream publicOut,
-			PgpSecretKey secretKey,
+			PgpSecretKeyRing secretKey,
+			PgpPublicKeyRing publicKey,
 			bool armor,
 			bool emitVersion)
 		{
@@ -623,10 +634,7 @@ namespace PgpCoreM
 			{
 				publicOutArmored = null;
 			}
-
-			PgpPublicKey key = secretKey.PublicKey;
-
-			key.Encode(publicOut);
+			publicKey.Encode(publicOut);
 
 			publicOutArmored?.Dispose();
 		}

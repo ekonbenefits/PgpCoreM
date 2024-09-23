@@ -549,21 +549,14 @@ namespace PgpCoreM
 		/// <param name="publicKeys"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
-		public static PgpPublicKey FindBestVerificationKey(PgpPublicKeyRing publicKeys)
+		public static IEnumerable<PgpPublicKey> SortBestVerificationKey(PgpPublicKeyRing publicKeys)
 		{
 			PgpPublicKey[] keys = publicKeys.GetPublicKeys().Cast<PgpPublicKey>().ToArray();
 
-			// Has Key Flags for signing content
-			PgpPublicKey[] verificationKeys = keys.Where(key => GetSigningScore(key) >= 3).ToArray();
-			// Failsafe, get master key with signing capabilities.
-			if (!verificationKeys.Any())
-				verificationKeys = keys.Where(key => GetSigningScore(key) >= 1).ToArray();
-
-			PgpPublicKey signingKey = verificationKeys.OrderByDescending(GetSigningScore).FirstOrDefault();
-			if (signingKey == null)
-				throw new ArgumentException("No verification keys in keyring");
-
-			return signingKey;
+		
+			var signingKeys = keys.OrderByDescending(GetSigningScore).ToArray();
+		
+			return signingKeys;
 		}
 
 		/// <summary>
@@ -572,26 +565,15 @@ namespace PgpCoreM
 		/// <param name="publicKeys"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
-		public static PgpPublicKey FindBestEncryptionKey(PgpPublicKeyRing publicKeys)
+		public static IEnumerable<PgpPublicKey> SortBestEncryptionKey(PgpPublicKeyRing publicKeys)
 		{
 			PgpPublicKey[] keys = publicKeys.GetPublicKeys().Cast<PgpPublicKey>().ToArray();
 			// Is encryption key and has the two encryption key flags
-			PgpPublicKey[] encryptKeys = keys.Where(key => GetEncryptionScore(key) >= 4).ToArray();
+		
 
-			// If no suitable encryption keys are found, get master key with encryption capability
-			if (!encryptKeys
-				    .Any())
-				encryptKeys = keys.Where(key => GetEncryptionScore(key) >= 3).ToArray();
+			var encryptionKey = keys.OrderByDescending(GetEncryptionScore).Where(it=>it.IsEncryptionKey );
 
-			// Otherwise get any keys with encryption capability
-			if (!encryptKeys
-					.Any())
-				encryptKeys = keys.Where(key => GetEncryptionScore(key) >= 2).ToArray();
-
-			PgpPublicKey encryptionKey = encryptKeys.OrderByDescending(GetEncryptionScore).FirstOrDefault();
-			if (encryptionKey == null)
-				throw new ArgumentException("No encryption keys in keyring");
-			return encryptionKey;
+			return encryptionKey.ToArray();
 		}
 
 		/// <summary>

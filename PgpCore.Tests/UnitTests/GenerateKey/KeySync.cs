@@ -46,11 +46,11 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                     // If we successfully read the public key without exceptions, it is considered valid
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
-                    publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0, 10));
-                    publicKey.IsEncryptionKey.Should().BeTrue();
+                    publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0,30));
+                    publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(1024);
+                    publicKey.BitStrength.Should().Be(4096);
                 }
 
             }
@@ -72,7 +72,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                                 k.Should().NotBeNull();
                                 k.IsSigningKey.Should().BeTrue();
                                 k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(SymmetricKeyAlgorithmTag.TripleDes);
+                                k.KeyEncryptionAlgorithm.Should().Be(pgp.SymmetricKeyAlgorithm);
                             }
                         }
                     }

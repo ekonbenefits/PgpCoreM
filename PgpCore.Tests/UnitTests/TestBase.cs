@@ -56,7 +56,7 @@ namespace PgpCoreM.Tests.UnitTests
             {
                 foreach (PgpPublicKey k in kRing.GetPublicKeys())
                 {
-                    if (k.IsEncryptionKey)
+                    if (k.IsMasterKey)
                         return k;
                 }
             }

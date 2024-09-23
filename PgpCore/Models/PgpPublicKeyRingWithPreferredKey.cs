@@ -20,7 +20,7 @@ namespace PgpCoreM.Models
         public PgpPublicKeyRingWithPreferredKey(PgpPublicKeyRing publicKeyRing)
         {
             PgpPublicKeyRing = publicKeyRing;
-            _defaultEncryptionKey = new Lazy<PgpPublicKey>(() => Utilities.FindBestEncryptionKey(PgpPublicKeyRing));
+            _defaultEncryptionKey = new Lazy<PgpPublicKey>(() => Utilities.SortBestEncryptionKey(PgpPublicKeyRing).FirstOrDefault());
             _encryptionKeys = new Lazy<IEnumerable<PgpPublicKey>>(() => PgpPublicKeyRing.GetPublicKeys().Where(key => key.IsEncryptionKey));
         }
 
