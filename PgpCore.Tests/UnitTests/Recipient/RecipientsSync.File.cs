@@ -10,7 +10,7 @@ using System.IO;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Bcpg;
 
-namespace PgpCore.Tests.UnitTests.Recipient
+namespace PgpCoreM.Tests.UnitTests.Recipient
 {
     public class RecipientsSync : TestBase
     {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgpCore.Helpers
+namespace PgpCoreM.Helpers
 {
     public static class StreamHelper
     {

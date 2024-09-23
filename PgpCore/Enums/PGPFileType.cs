@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PgpCore.Enums
+namespace PgpCoreM.Enums
 {
     public enum PGPFileType
     {

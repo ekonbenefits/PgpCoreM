@@ -1,8 +1,8 @@
-﻿using PgpCore.Models;
-using System;
+﻿using System;
 using System.IO;
+using PgpCoreM.Models;
 
-namespace PgpCore.Abstractions
+namespace PgpCoreM.Abstractions
 {
     public interface IInspectSync : IDisposable
     {

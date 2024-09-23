@@ -1,19 +1,19 @@
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Security;
-using PgpCore.Abstractions;
-using PgpCore.Enums;
-using PgpCore.Extensions;
-using PgpCore.Helpers;
-using PgpCore.Models;
+using PgpCoreM.Extensions;
+using PgpCoreM.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PgpCoreM.Abstractions;
+using PgpCoreM.Enums;
+using PgpCoreM.Models;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IPGP
 	{

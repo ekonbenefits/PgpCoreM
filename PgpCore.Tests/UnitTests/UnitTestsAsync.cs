@@ -8,10 +8,10 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
-using PgpCore.Models;
+using PgpCoreM.Models;
 using Xunit;
 
-namespace PgpCore.Tests
+namespace PgpCoreM.Tests
 {
     public class UnitTestsAsync
     {

@@ -1,6 +1,5 @@
 ﻿using FluentAssertions.Execution;
 using FluentAssertions;
-using PgpCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using System.IO;
+using PgpCoreM.Models;
 
-namespace PgpCore.Tests.UnitTests.Sign
+namespace PgpCoreM.Tests.UnitTests.Sign
 {
     public class SignSync_File : TestBase
     {

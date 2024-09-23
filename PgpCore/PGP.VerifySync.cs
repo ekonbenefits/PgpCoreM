@@ -1,14 +1,14 @@
 ﻿using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
-using PgpCore.Abstractions;
-using PgpCore.Extensions;
-using PgpCore.Helpers;
-using PgpCore.Models;
+using PgpCoreM.Extensions;
+using PgpCoreM.Helpers;
 using System;
 using System.IO;
 using System.Linq;
+using PgpCoreM.Abstractions;
+using PgpCoreM.Models;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IVerifySync
     {

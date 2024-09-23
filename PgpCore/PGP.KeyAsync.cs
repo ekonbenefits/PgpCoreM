@@ -1,12 +1,12 @@
 ﻿using Org.BouncyCastle.Bcpg;
-using PgpCore.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using PgpCoreM.Abstractions;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IKeyAsync
     {

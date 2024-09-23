@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using PgpCore.Models;
 using System.IO;
 using System.Xml.Linq;
+using PgpCoreM.Models;
 
-namespace PgpCore.Tests.UnitTests.Encrypt
+namespace PgpCoreM.Tests.UnitTests.Encrypt
 {
     public class EncryptSync_String : TestBase
     {

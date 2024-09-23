@@ -1,10 +1,8 @@
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Utilities.Zlib;
-using PgpCore.Abstractions;
-using PgpCore.Extensions;
-using PgpCore.Helpers;
-using PgpCore.Models;
+using PgpCoreM.Extensions;
+using PgpCoreM.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +11,10 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using PgpCoreM.Abstractions;
+using PgpCoreM.Models;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IInspectSync
     {

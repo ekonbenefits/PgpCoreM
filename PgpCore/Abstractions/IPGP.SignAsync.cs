@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace PgpCore.Abstractions
+namespace PgpCoreM.Abstractions
 {
     public interface ISignAsync : IDisposable
     {

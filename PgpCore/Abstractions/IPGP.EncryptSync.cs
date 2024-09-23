@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgpCore.Abstractions
+namespace PgpCoreM.Abstractions
 {
     public interface IEncryptSync : IDisposable
     {

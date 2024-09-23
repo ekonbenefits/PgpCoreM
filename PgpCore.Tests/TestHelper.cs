@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgpCore.Tests
+namespace PgpCoreM.Tests
 {
     internal static class TestHelper
     {

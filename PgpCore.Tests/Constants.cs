@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PgpCore.Tests
+namespace PgpCoreM.Tests
 {
     public static class Constants
     {

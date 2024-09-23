@@ -3,13 +3,13 @@ using FluentAssertions.Execution;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Security;
-using PgpCore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using PgpCoreM.Models;
 using Xunit;
 
-namespace PgpCore.Tests.UnitTests.Decrypt
+namespace PgpCoreM.Tests.UnitTests.Decrypt
 {
     public class DecryptSync_File : TestBase
     {

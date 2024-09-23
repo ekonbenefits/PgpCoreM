@@ -1,9 +1,9 @@
-﻿using PgpCore.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using PgpCoreM.Models;
 
-namespace PgpCore.Abstractions
+namespace PgpCoreM.Abstractions
 {
     public interface IInspectAsync : IDisposable
     {

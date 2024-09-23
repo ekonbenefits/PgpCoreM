@@ -3,7 +3,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgpCore.Extensions
+namespace PgpCoreM.Extensions
 {
     internal static class StreamExtensions
     {

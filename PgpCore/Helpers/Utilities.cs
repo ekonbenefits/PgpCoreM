@@ -13,10 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Org.BouncyCastle.Bcpg.Sig;
-using PgpCore.Helpers;
-using PgpCore.Extensions;
+using PgpCoreM.Helpers;
+using PgpCoreM.Extensions;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     /// <remarks>Basic utility class.</remarks>
     public static class Utilities

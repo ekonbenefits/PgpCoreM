@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using PgpCore.Helpers;
-using PgpCore.Models;
-using PgpCore.Abstractions;
-using PgpCore.Extensions;
+using PgpCoreM.Helpers;
+using PgpCoreM.Extensions;
+using PgpCoreM.Abstractions;
+using PgpCoreM.Models;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IEncryptAsync
     {

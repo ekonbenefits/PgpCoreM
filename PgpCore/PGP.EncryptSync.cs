@@ -1,16 +1,16 @@
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Security;
-using PgpCore.Helpers;
+using PgpCoreM.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using PgpCore.Models;
-using PgpCore.Abstractions;
-using PgpCore.Extensions;
+using PgpCoreM.Extensions;
+using PgpCoreM.Abstractions;
+using PgpCoreM.Models;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IEncryptSync
     {

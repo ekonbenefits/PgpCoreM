@@ -5,12 +5,12 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using PgpCore.Abstractions;
 using System.IO;
 using System;
 using Org.BouncyCastle.Math;
+using PgpCoreM.Abstractions;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : IKeySync
     {

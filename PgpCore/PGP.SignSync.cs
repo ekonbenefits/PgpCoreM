@@ -1,13 +1,13 @@
 using Org.BouncyCastle.Bcpg;
-using PgpCore.Abstractions;
-using PgpCore.Extensions;
-using PgpCore.Helpers;
+using PgpCoreM.Extensions;
+using PgpCoreM.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using PgpCoreM.Abstractions;
 
-namespace PgpCore
+namespace PgpCoreM
 {
     public partial class PGP : ISignSync
     {

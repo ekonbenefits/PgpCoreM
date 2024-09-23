@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgpCore.Tests.UnitTests
+namespace PgpCoreM.Tests.UnitTests
 {
     public abstract class TestBase
     {

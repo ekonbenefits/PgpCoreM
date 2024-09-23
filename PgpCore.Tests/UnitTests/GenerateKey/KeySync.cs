@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Org.BouncyCastle.Bcpg;
 
-namespace PgpCore.Tests.UnitTests.GenerateKey
+namespace PgpCoreM.Tests.UnitTests.GenerateKey
 {
     public class KeySync : TestBase
     {

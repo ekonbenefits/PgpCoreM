@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PgpCore.Models
+namespace PgpCoreM.Models
 {
     public class PgpInspectBaseResult
     {

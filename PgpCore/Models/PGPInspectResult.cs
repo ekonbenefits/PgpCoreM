@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PgpCore.Models
+namespace PgpCoreM.Models
 {
     public class PgpInspectResult : PgpInspectBaseResult
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace PgpCore.Abstractions
+namespace PgpCoreM.Abstractions
 {
     public interface IRecipientsSync : IDisposable
     {

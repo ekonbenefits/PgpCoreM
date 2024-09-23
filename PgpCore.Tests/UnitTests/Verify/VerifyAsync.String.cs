@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Xunit;
 using System.IO;
 
-namespace PgpCore.Tests.UnitTests.Verify
+namespace PgpCoreM.Tests.UnitTests.Verify
 {
     public class VerifyAsync_String : TestBase
     {
