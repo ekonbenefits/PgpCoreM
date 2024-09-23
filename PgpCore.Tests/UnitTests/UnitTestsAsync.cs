@@ -115,7 +115,7 @@ namespace PgpCoreM.Tests
             await testFactory.ArrangeAsync(KeyType.Known, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
             PGP pgp = new PGP(encryptionKeys);
-            pgp.HashAlgorithmTag = hashAlgorithmTag;
+            pgp.HashAlgorithm = hashAlgorithmTag;
 
             // Act
             await pgp.EncryptFileAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -456,7 +456,7 @@ namespace PgpCoreM.Tests
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyFileInfo, testFactory.Password);
             PGP pgpEncrypt = new PGP(encryptionKeys);
             PGP pgpDecrypt = new PGP(decryptionKeys);
-            pgpEncrypt.HashAlgorithmTag = hashAlgorithmTag;
+            pgpEncrypt.HashAlgorithm = hashAlgorithmTag;
 
             // Act
             await pgpEncrypt.EncryptFileAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -1775,7 +1775,7 @@ namespace PgpCoreM.Tests
             await testFactory.ArrangeAsync(KeyType.Known, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKey);
             PGP pgp = new PGP(encryptionKeys);
-            pgp.HashAlgorithmTag = hashAlgorithmTag;
+            pgp.HashAlgorithm = hashAlgorithmTag;
 
             // Act
             string encryptedContent = await pgp.EncryptArmoredStringAsync(testFactory.Content);
@@ -2149,7 +2149,7 @@ namespace PgpCoreM.Tests
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKey, testFactory.PrivateKey, testFactory.Password);
             PGP pgp = new PGP(encryptionKeys)
             {
-                HashAlgorithmTag = hashAlgorithmTag
+                HashAlgorithm = hashAlgorithmTag
             };
 
             // Act

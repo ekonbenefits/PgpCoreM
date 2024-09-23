@@ -161,7 +161,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
             PGP pgpEncrypt = new PGP(encryptionKeys)
             {
-                HashAlgorithmTag = hashAlgorithmTag
+                HashAlgorithm = hashAlgorithmTag
             };
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
@@ -195,7 +195,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
             PGP pgpEncrypt = new PGP(encryptionKeys)
             {
-                HashAlgorithmTag = hashAlgorithmTag
+                HashAlgorithm = hashAlgorithmTag
             };
             PGP pgpDecrypt = new PGP(decryptionKeys);
 

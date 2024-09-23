@@ -94,8 +94,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                 testFactory.PublicKeyFileInfo,
                 testFactory.PrivateKeyFileInfo,
                 testFactory.UserName,
-                testFactory.Password,
-                strength: 2048
+                testFactory.Password
                 );
 
             // Assert

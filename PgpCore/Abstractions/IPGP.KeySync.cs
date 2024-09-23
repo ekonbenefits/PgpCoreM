@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace PgpCoreM.Abstractions
 {
@@ -13,29 +14,21 @@ namespace PgpCoreM.Abstractions
             FileInfo privateKeyFileInfo,
             string username = null,
             string password = null,
-            int strength = 1024,
-            int certainty = 8,
+            int sigType = PgpSignature.DefaultCertification,
             bool armor = true,
             bool emitVersion = true,
             long keyExpirationInSeconds = 0,
-            long signatureExpirationInSeconds = 0,
-            CompressionAlgorithmTag[] preferredCompressionAlgorithms = null,
-            HashAlgorithmTag[] preferredHashAlgorithmTags = null,
-            SymmetricKeyAlgorithmTag[] preferredSymetricKeyAlgorithms = null);
+            long signatureExpirationInSeconds = 0);
 
         void GenerateKey(
             Stream publicKeyStream,
             Stream privateKeyStream,
             string username = null,
             string password = null,
-            int strength = 1024,
-            int certainty = 8,
+            int sigType = PgpSignature.DefaultCertification,
             bool armor = true,
             bool emitVersion = true,
             long keyExpirationInSeconds = 0,
-            long signatureExpirationInSeconds = 0,
-            CompressionAlgorithmTag[] preferredCompressionAlgorithms = null,
-            HashAlgorithmTag[] preferredHashAlgorithmTags = null,
-            SymmetricKeyAlgorithmTag[] preferredSymetricKeyAlgorithms = null);
+            long signatureExpirationInSeconds = 0);
     }
 }

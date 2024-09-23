@@ -1,8 +1,12 @@
+using System.Linq;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using Org.BouncyCastle.Bcpg.Sig;
+using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using PgpCoreM.Extensions;
 using PgpCoreM.Helpers;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,32 +14,145 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PgpCoreM.Abstractions;
-using PgpCoreM.Enums;
+using PgpCoreM;
 using PgpCoreM.Models;
 
 namespace PgpCoreM
 {
     public partial class PGP : IPGP
 	{
-		public static PGP Instance => _instance ?? (_instance = new PGP());
+		public static PGP Instance => _instance ??= new PGP();
 		private static PGP _instance;
+
+        private static SecureRandom _secRandom;
+        public static SecureRandom SecRandom => _secRandom ??= new SecureRandom();
 
 		private const int BufferSize = 0x10000;
 		private const string DefaultFileName = "name";
 
-		public CompressionAlgorithmTag CompressionAlgorithm { get; set; } = CompressionAlgorithmTag.Uncompressed;
+        private List<CompressionAlgorithmTag> _defaultCompressionAlgs =
+            new()
+            {
+                CompressionAlgorithmTag.Uncompressed,
+                CompressionAlgorithmTag.Zip
+            };
 
-		public SymmetricKeyAlgorithmTag SymmetricKeyAlgorithm { get; set; } = SymmetricKeyAlgorithmTag.TripleDes;
+        private List<HashAlgorithmTag> _defaultHashAlgs = new()
+        {
+            HashAlgorithmTag.Sha1,
+            HashAlgorithmTag.Sha256,
+            HashAlgorithmTag.Sha512,
+        };
 
-		public int PgpSignatureType { get; set; } = PgpSignature.DefaultCertification;
+        private List<SymmetricKeyAlgorithmTag> _defaultSymmetricKeyAlgs = new()
+        {
+            SymmetricKeyAlgorithmTag.Aes256,
+            SymmetricKeyAlgorithmTag.Aes128,
+			SymmetricKeyAlgorithmTag.Aes192
+        };
 
-		public PublicKeyAlgorithmTag PublicKeyAlgorithm { get; set; } = PublicKeyAlgorithmTag.RsaGeneral;
+        private CompressionAlgorithmTag[] _preferredCompressionAlgorithms;
+
+        public CompressionAlgorithmTag[] PreferredCompressionAlgorithms
+        {
+            get
+            {	if (_preferredCompressionAlgorithms is { Length: > 0 })
+                {
+                    return _preferredCompressionAlgorithms;
+                }
+
+                return preferredAlgHelper().ToArray();
+
+                IEnumerable<CompressionAlgorithmTag> preferredAlgHelper()
+                {
+                   
+                    yield return CompressionAlgorithm;
+                 
+
+                    foreach (var alg in _defaultCompressionAlgs
+                                 .Where(it=> it != CompressionAlgorithm))
+                    {
+                        yield return alg;
+                    }
+                }
+            }
+            set => _preferredCompressionAlgorithms = value;
+        }
+
+        private HashAlgorithmTag[] _preferredHashAlgorithms;
+    
+
+
+        public HashAlgorithmTag[] PreferredHashAlgorithms
+        {
+            get
+            {
+                if (_preferredHashAlgorithms is { Length: > 0 })
+                {
+                    return _preferredHashAlgorithms;
+                }
+
+                return PreferredAlgHelper().ToArray();
+
+                IEnumerable<HashAlgorithmTag> PreferredAlgHelper()
+                {
+                  
+                    yield return HashAlgorithm;
+                  
+
+                    foreach (var alg in _defaultHashAlgs
+                                 .Where(it => it != HashAlgorithm))
+                    {
+                        yield return alg;
+                    }
+                }
+            }
+            set => _preferredHashAlgorithms = value;
+        }
+
+        private SymmetricKeyAlgorithmTag[] _preferredSymmetricKeyAlgorithms;
+        public SymmetricKeyAlgorithmTag[] PreferredSymmetricKeyAlgorithms
+        {
+            get
+            {
+                if (_preferredSymmetricKeyAlgorithms is { Length: > 0 })
+                {
+                    return _preferredSymmetricKeyAlgorithms;
+                }
+
+                return PreferredAlgHelper().ToArray();
+
+                IEnumerable<SymmetricKeyAlgorithmTag> PreferredAlgHelper()
+                {
+                   
+                    yield return SymmetricKeyAlgorithm;
+
+
+                    foreach (var alg in _defaultSymmetricKeyAlgs
+                                 .Where(it => it != SymmetricKeyAlgorithm))
+                    {
+                        yield return alg;
+                    }
+                }
+            }
+            set => _preferredSymmetricKeyAlgorithms = value;
+        }	
+
+
+        public CompressionAlgorithmTag CompressionAlgorithm { get; set; } = CompressionAlgorithmTag.Uncompressed;
+
+		public SymmetricKeyAlgorithmTag SymmetricKeyAlgorithm { get; set; } = SymmetricKeyAlgorithmTag.Aes256;
+
+
+		public AsymmetricAlgorithm PublicKeyAlgorithm { get; set; } = AsymmetricAlgorithm.Rsa;
 
 		public PGPFileType FileType { get; set; } = PGPFileType.Binary;
 
-		public HashAlgorithmTag HashAlgorithmTag { get; set; } = HashAlgorithmTag.Sha1;
+		public HashAlgorithmTag HashAlgorithm { get; set; } = HashAlgorithmTag.Sha256;
 
 		public IEncryptionKeys EncryptionKeys { get; private set; }
+
+        public int SecurityStrengthInBits { get; set; } = 256;
 
 		#region Constructor
 
@@ -409,7 +526,7 @@ namespace PgpCoreM
         private PgpSignatureGenerator InitSignatureGenerator(Stream compressedOut)
 		{
 			PublicKeyAlgorithmTag tag = EncryptionKeys.SigningSecretKey.PublicKey.Algorithm;
-			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithmTag);
+			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
 			pgpSignatureGenerator.InitSign(PgpSignature.BinaryDocument, EncryptionKeys.SigningPrivateKey);
 			foreach (string userId in EncryptionKeys.SigningSecretKey.PublicKey.GetUserIds())
 			{
@@ -431,9 +548,9 @@ namespace PgpCoreM
 		private PgpSignatureGenerator InitClearSignatureGenerator(ArmoredOutputStream armoredOutputStream)
 		{
 			PublicKeyAlgorithmTag tag = EncryptionKeys.SigningSecretKey.PublicKey.Algorithm;
-			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithmTag);
+			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
 			pgpSignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, EncryptionKeys.SigningPrivateKey);
-			armoredOutputStream.BeginClearText(HashAlgorithmTag);
+			armoredOutputStream.BeginClearText(HashAlgorithm);
 			foreach (string userId in EncryptionKeys.SigningSecretKey.PublicKey.GetUserIds())
 			{
 				PgpSignatureSubpacketGenerator subPacketGenerator = new PgpSignatureSubpacketGenerator();

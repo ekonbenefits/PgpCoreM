@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using PgpCoreM.Abstractions;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace PgpCoreM
 {
@@ -15,19 +16,14 @@ namespace PgpCoreM
             FileInfo privateKeyFileInfo,
             string username = null,
             string password = null,
-            int strength = 1024,
-            int certainty = 8,
+            int sigType = PgpSignature.DefaultCertification,
             bool armor = true,
             bool emitVersion = true,
             long keyExpirationInSeconds = 0,
-            long signatureExpirationInSeconds = 0,
-            CompressionAlgorithmTag[] preferredCompressionAlgorithms = null,
-            HashAlgorithmTag[] preferredHashAlgorithmTags = null,
-            SymmetricKeyAlgorithmTag[] preferredSymetricKeyAlgorithms = null)
+            long signatureExpirationInSeconds = 0)
                 {
-                    await Task.Run(() => GenerateKey(publicKeyFileInfo, privateKeyFileInfo, username, password, strength,
-                        certainty, armor, emitVersion, keyExpirationInSeconds, signatureExpirationInSeconds,
-                        preferredCompressionAlgorithms, preferredHashAlgorithmTags, preferredSymetricKeyAlgorithms));
+                    await Task.Run(() => GenerateKey(publicKeyFileInfo, privateKeyFileInfo, username, password, sigType,
+                         armor, emitVersion, keyExpirationInSeconds, signatureExpirationInSeconds));
                 }
 
         public async Task GenerateKeyAsync(
@@ -35,19 +31,14 @@ namespace PgpCoreM
             Stream privateKeyStream,
             string username = null,
             string password = null,
-            int strength = 1024,
-            int certainty = 8,
+            int sigType = PgpSignature.DefaultCertification,
             bool armor = true,
             bool emitVersion = true,
             long keyExpirationInSeconds = 0,
-            long signatureExpirationInSeconds = 0,
-            CompressionAlgorithmTag[] preferredCompressionAlgorithms = null,
-            HashAlgorithmTag[] preferredHashAlgorithmTags = null,
-            SymmetricKeyAlgorithmTag[] preferredSymetricKeyAlgorithms = null)
+            long signatureExpirationInSeconds = 0)
         {
-            await Task.Run(() => GenerateKey(publicKeyStream, privateKeyStream, username, password, strength,
-                certainty, armor, emitVersion, keyExpirationInSeconds, signatureExpirationInSeconds,
-                preferredCompressionAlgorithms, preferredHashAlgorithmTags, preferredSymetricKeyAlgorithms));
+            await Task.Run(() => GenerateKey(publicKeyStream, privateKeyStream, username, password, sigType,
+                 armor, emitVersion, keyExpirationInSeconds, signatureExpirationInSeconds));
         }
     }
 }
