@@ -21,7 +21,23 @@ namespace PgpCoreM
     /// <remarks>Basic utility class.</remarks>
     public static class Utilities
 	{
-		public static MPInteger[] DsaSigToMpi(
+        public static int SecStrength(AsymmetricAlgorithm asymmetricAlgorithm, int securityStrength)
+        {
+            return asymmetricAlgorithm switch
+            {
+                AsymmetricAlgorithm.Rsa => securityStrength switch
+                {
+                    128 => 2048,
+                    192 => 3072,
+                    256 => 4096,
+                    _ => 2048
+                },
+                _ => securityStrength
+            };
+        }
+
+
+        public static MPInteger[] DsaSigToMpi(
 			byte[] encoding)
 		{
 			DerInteger i1, i2;

@@ -11,13 +11,16 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
 {
     public class KeySync : TestBase
     {
-        [Fact]
-        public void GenerateKey_CreatePublicAndPrivateKeys_ShouldCreateKeysWithDefaultProperties()
+        [Theory]
+        [InlineData(AsymmetricAlgorithm.Rsa)]
+        [InlineData(AsymmetricAlgorithm.Ec25519)]
+        public void GenerateKey_CreatePublicAndPrivateKeys_ShouldCreateKeysWithDefaultProperties(AsymmetricAlgorithm alg)
         {
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
             PGP pgp = new PGP();
+            pgp.PublicKeyAlgorithm = alg;
 
             // Act
             pgp.GenerateKey(
@@ -50,7 +53,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                     publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(4096);
+                    publicKey.BitStrength.Should().Be(Utilities.SecStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
                 }
 
             }

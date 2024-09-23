@@ -58,17 +58,10 @@ namespace PgpCoreM
             IAsymmetricCipherKeyPairGenerator kpgSign;
             IAsymmetricCipherKeyPairGenerator kpgEncrypt;
 
-            int algStrength = PublicKeyAlgorithm switch
-            {
-                AsymmetricAlgorithm.Rsa => SecurityStrengthInBits switch
-                {
-                    128 => 2048,
-                    192 => 3072,
-                    256 => 4096,
-                    _ => 2048
-                },
-                _ => SecurityStrengthInBits
-            };
+            var pubKeyAlg = PublicKeyAlgorithm;
+            var secStrength = SecurityStrengthInBits;
+
+            int algStrength = Utilities.SecStrength(pubKeyAlg, secStrength);
 
             switch (PublicKeyAlgorithm)
             {
@@ -142,5 +135,7 @@ namespace PgpCoreM
 
             ExportKeyPair(privateKeyStream, publicKeyStream, secretKeyRing, pubKeyRing, armor, emitVersion);
         }
+
+   
     }
 }
