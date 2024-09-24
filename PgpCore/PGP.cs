@@ -162,18 +162,7 @@ namespace PgpCoreM
         {
 			SecurityStrengthInBits = securityStrengthInBits;
 			PublicKeyAlgorithm = alg;
-            switch (SecurityStrengthInBits)
-            {
-                case <= 128:
-                    SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes128;
-                    break;
-				case <= 192:
-					SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes192;
-					break;
-				case <= 256 or > 256:
-                    SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes256;
-                    break;
-            }
+            SymmetricKeyAlgorithm = Utilities.GetSymmetricAlgorithm(securityStrengthInBits);
 
 
         }

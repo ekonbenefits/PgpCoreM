@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Org.BouncyCastle.Bcpg.Sig;
 using PgpCoreM.Helpers;
@@ -60,6 +61,14 @@ namespace PgpCoreM
                 }
             };
         }
+
+		public static SymmetricKeyAlgorithmTag GetSymmetricAlgorithm(int symmetricStrength)
+            => symmetricStrength switch
+            {
+                <= 128 => SymmetricKeyAlgorithmTag.Aes128,
+                <= 192 => SymmetricKeyAlgorithmTag.Aes192,
+                <= 256 or > 256 => SymmetricKeyAlgorithmTag.Aes256,
+            };
 
         public static MPInteger[] DsaSigToMpi(
 			byte[] encoding)

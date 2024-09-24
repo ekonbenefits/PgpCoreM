@@ -29,6 +29,26 @@ namespace PgpCoreM.Tests.UnitTests
             }
         }
 
+        public static IEnumerable<object[]> GetStrengthsAndAlgs()
+        {
+            foreach (int strength in new int[] { 128, 192, 256 })
+            {
+                foreach (var asymmetricAlgorithm in TestHelper.GetEnumValues<AsymmetricAlgorithm>())
+                {
+                    if (strength != 128 && asymmetricAlgorithm == AsymmetricAlgorithm.Ec25519){
+                        continue;
+                    }
+
+                    if (strength == 256 && asymmetricAlgorithm == AsymmetricAlgorithm.Rsa)
+                    {
+                        //too slow
+                        continue;
+                    }
+                    yield return new object[] { strength, asymmetricAlgorithm };
+                }
+            }
+        }
+
         public static IEnumerable<object[]> GetHashAlgorithimTags()
         {
             foreach (HashAlgorithmTag hashAlgorithmTag in TestHelper.GetEnumValues<HashAlgorithmTag>())

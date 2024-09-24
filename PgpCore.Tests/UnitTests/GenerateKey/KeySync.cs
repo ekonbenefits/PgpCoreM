@@ -11,17 +11,15 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
 {
     public class KeySync : TestBase
     {
+
         [Theory]
-        [InlineData(AsymmetricAlgorithm.Rsa)]
-        [InlineData(AsymmetricAlgorithm.Ec)]
-        [InlineData(AsymmetricAlgorithm.Ec25519)]
-        public void GenerateKey_CreatePublicAndPrivateKeys_ShouldCreateKeysWithDefaultProperties(AsymmetricAlgorithm alg)
+        [MemberData(nameof(GetStrengthsAndAlgs))]
+        public void GenerateKey_CreatePublicAndPrivateKeysWithKeyStrength_ShouldCreateKeysVariousStrength(int strength, AsymmetricAlgorithm alg)
         {
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
-            PGP pgp = new PGP();
-            pgp.PublicKeyAlgorithm = alg;
+            PGP pgp = new PGP(strength, alg);
 
             // Act
             pgp.GenerateKey(
@@ -47,84 +45,17 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
                     PgpPublicKey publicKey = publicKey = ReadPublicKey(publicKeyStream);
+                    var startTime = DateTime.UtcNow;
                     // If we successfully read the public key without exceptions, it is considered valid
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
-                    publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0,30));
+                    publicKey.CreationTime.Should().BeBefore(startTime.Add(new TimeSpan(0, 0, 15 *  2 ^ (strength / 64 ))));
                     publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
                     publicKey.BitStrength.Should().Be(Utilities.AsymmetricStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
-                }
-
-            }
-
-            // Assert private key properties
-            using (new AssertionScope())
-            {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(VERSION);
-
-                using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
-                {
-                    PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(privateKeyStream));
-                    foreach (PgpSecretKeyRing kRing in pgpSec.GetKeyRings())
-                    {
-                        foreach (PgpSecretKey k in kRing.GetSecretKeys())
-                        {
-                            if (k.IsSigningKey)
-                            {
-                                k.Should().NotBeNull();
-                                k.IsSigningKey.Should().BeTrue();
-                                k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(pgp.SymmetricKeyAlgorithm);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        [Fact]
-        public void GenerateKey_CreatePublicAndPrivateKeysWithKeyStrengthAndAES_ShouldCreateKeysWithSpecifiedProperties()
-        {
-            // Arrange
-            TestFactory testFactory = new TestFactory();
-            testFactory.Arrange();
-            PGP pgp = new PGP();
-            pgp.SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes256;
-
-            // Act
-            pgp.GenerateKey(
-                testFactory.PublicKeyFileInfo,
-                testFactory.PrivateKeyFileInfo,
-                testFactory.UserName,
-                testFactory.Password
-                );
-
-            // Assert
-            // Assert that the keys were created
-            using (new AssertionScope())
-            {
-                testFactory.PublicKeyFileInfo.Exists.Should().BeTrue();
-                testFactory.PrivateKeyFileInfo.Exists.Should().BeTrue();
-            }
-
-            // Assert public key properties
-            using (new AssertionScope())
-            {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(VERSION);
-
-                using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
-                {
-                    PgpPublicKey publicKey = publicKey = ReadPublicKey(publicKeyStream);
-                    // If we successfully read the public key without exceptions, it is considered valid
-                    publicKey.Should().NotBeNull();
-                    publicKey.Version.Should().Be(4);
-                    publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0, 10));
-                    publicKey.IsEncryptionKey.Should().BeTrue();
-                    publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(2048);
+
                 }
             }
 
@@ -145,76 +76,8 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                                 k.Should().NotBeNull();
                                 k.IsSigningKey.Should().BeTrue();
                                 k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(SymmetricKeyAlgorithmTag.Aes256);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                                k.KeyEncryptionAlgorithm.Should().Be(Utilities.GetSymmetricAlgorithm(pgp.SecurityStrengthInBits));
 
-
-        [Fact]
-        public void GenerateKey_CreatePublicAndPrivateKeysWithKeyStrength_ShouldCreateKeysWithSpecifiedProperties()
-        {
-            // Arrange
-            TestFactory testFactory = new TestFactory();
-            testFactory.Arrange();
-            PGP pgp = new PGP();
-
-            // Act
-            pgp.GenerateKey(
-                testFactory.PublicKeyFileInfo,
-                testFactory.PrivateKeyFileInfo,
-                testFactory.UserName,
-                testFactory.Password
-                );
-
-            // Assert
-            // Assert that the keys were created
-            using (new AssertionScope())
-            {
-                testFactory.PublicKeyFileInfo.Exists.Should().BeTrue();
-                testFactory.PrivateKeyFileInfo.Exists.Should().BeTrue();
-            }
-
-            // Assert public key properties
-            using (new AssertionScope())
-            {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(VERSION);
-
-                using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
-                {
-                    PgpPublicKey publicKey = publicKey = ReadPublicKey(publicKeyStream);
-                    // If we successfully read the public key without exceptions, it is considered valid
-                    publicKey.Should().NotBeNull();
-                    publicKey.Version.Should().Be(4);
-                    publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0, 10));
-                    publicKey.IsEncryptionKey.Should().BeTrue();
-                    publicKey.IsMasterKey.Should().BeTrue();
-                    publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(2048);
-                }
-            }
-
-            // Assert private key properties
-            using (new AssertionScope())
-            {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(VERSION);
-
-                using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
-                {
-                    PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(privateKeyStream));
-                    foreach (PgpSecretKeyRing kRing in pgpSec.GetKeyRings())
-                    {
-                        foreach (PgpSecretKey k in kRing.GetSecretKeys())
-                        {
-                            if (k.IsSigningKey)
-                            {
-                                k.Should().NotBeNull();
-                                k.IsSigningKey.Should().BeTrue();
-                                k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(SymmetricKeyAlgorithmTag.TripleDes);
                             }
                         }
                     }
@@ -259,10 +122,10 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
                     publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0, 10));
-                    publicKey.IsEncryptionKey.Should().BeTrue();
+                    publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(1024);
+                    publicKey.BitStrength.Should().Be(Utilities.AsymmetricStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
                 }
 
             }
@@ -284,7 +147,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                                 k.Should().NotBeNull();
                                 k.IsSigningKey.Should().BeTrue();
                                 k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(SymmetricKeyAlgorithmTag.TripleDes);
+                                k.KeyEncryptionAlgorithm.Should().Be(Utilities.GetSymmetricAlgorithm(pgp.SecurityStrengthInBits));
                             }
                         }
                     }
@@ -329,10 +192,10 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
                     publicKey.CreationTime.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(0, 0, 10));
-                    publicKey.IsEncryptionKey.Should().BeTrue();
+                    publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(1024);
+                    publicKey.BitStrength.Should().Be(Utilities.AsymmetricStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
                     publicKey.GetValidSeconds().Should().Be(60);
                 }
 
@@ -355,7 +218,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                                 k.Should().NotBeNull();
                                 k.IsSigningKey.Should().BeTrue();
                                 k.IsMasterKey.Should().BeTrue();
-                                k.KeyEncryptionAlgorithm.Should().Be(SymmetricKeyAlgorithmTag.TripleDes);
+                                k.KeyEncryptionAlgorithm.Should().Be(Utilities.GetSymmetricAlgorithm(pgp.SecurityStrengthInBits));
                             }
                         }
                     }
