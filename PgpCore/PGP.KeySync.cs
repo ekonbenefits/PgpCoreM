@@ -101,6 +101,7 @@ namespace PgpCoreM
             };
 
             PgpKeyPair masterKey = new PgpKeyPair(publicKeySignAlgo, kpgSign.GenerateKeyPair(), DateTime.UtcNow);
+            
             PgpKeyPair encKey = new PgpKeyPair(publicKeyEncAlgo, kpgEncrypt.GenerateKeyPair(), DateTime.UtcNow);
 
             PgpSignatureSubpacketGenerator signHashGen = new PgpSignatureSubpacketGenerator();
@@ -111,6 +112,7 @@ namespace PgpCoreM
             signHashGen.SetFeature(false, Features.FEATURE_MODIFICATION_DETECTION);
             signHashGen.SetKeyExpirationTime(false, keyExpirationInSeconds);
             signHashGen.SetSignatureExpirationTime(false, signatureExpirationInSeconds);
+            
 
             PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(
                 sigType,
@@ -121,20 +123,14 @@ namespace PgpCoreM
                 password?.ToCharArray(),
                 true, //for key ids
                 signHashGen.Generate(),
-                null,
-                PGP.SecRandom);
+                null,PGP.SecRandom);
 
             PgpSignatureSubpacketGenerator encHashGen = new PgpSignatureSubpacketGenerator();
             encHashGen.SetKeyFlags(false, PgpKeyFlags.CanEncryptCommunications | PgpKeyFlags.CanEncryptStorage);
-            encHashGen.SetPreferredCompressionAlgorithms(false, Array.ConvertAll(PreferredCompressionAlgorithms, item => (int)item));
-            encHashGen.SetPreferredHashAlgorithms(false, Array.ConvertAll(PreferredHashAlgorithms, item => (int)item));
-            encHashGen.SetPreferredSymmetricAlgorithms(false, Array.ConvertAll(PreferredSymmetricKeyAlgorithms, item => (int)item));
-            encHashGen.SetFeature(false, Features.FEATURE_MODIFICATION_DETECTION);
             encHashGen.SetKeyExpirationTime(false, keyExpirationInSeconds);
             encHashGen.SetSignatureExpirationTime(false, signatureExpirationInSeconds);
-            
 
-            keyRingGen.AddSubKey(encKey, encHashGen.Generate(), null);
+            keyRingGen.AddSubKey(encKey, encHashGen.Generate(), null, HashAlgorithm);
             
 
             var secretKeyRing = keyRingGen.GenerateSecretKeyRing();

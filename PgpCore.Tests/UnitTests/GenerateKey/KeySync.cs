@@ -6,11 +6,18 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using Org.BouncyCastle.Bcpg;
+using Xunit.Abstractions;
 
 namespace PgpCoreM.Tests.UnitTests.GenerateKey
 {
     public class KeySync : TestBase
     {
+        private readonly ITestOutputHelper output;
+
+        public KeySync(ITestOutputHelper output) 
+        {
+            this.output = output;
+        }
 
         [Theory]
         [MemberData(nameof(GetStrengthsAndAlgs))]
@@ -20,6 +27,13 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
             PGP pgp = new PGP(strength, alg);
+
+
+            output.WriteLine(testFactory.PublicKeyFileInfo.FullName);
+            output.WriteLine(testFactory.PrivateKeyFileInfo.FullName);
+            output.WriteLine(testFactory.UserName);
+            output.WriteLine(testFactory.Password);
+
 
             // Act
             pgp.GenerateKey(

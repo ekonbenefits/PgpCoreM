@@ -38,8 +38,8 @@ namespace PgpCoreM
 
         private readonly List<HashAlgorithmTag> _defaultHashAlgs =
         [
-            HashAlgorithmTag.Sha1,
             HashAlgorithmTag.Sha256,
+			HashAlgorithmTag.Sha384,
             HashAlgorithmTag.Sha512
         ];
 
@@ -163,6 +163,16 @@ namespace PgpCoreM
 			SecurityStrengthInBits = securityStrengthInBits;
 			PublicKeyAlgorithm = alg;
             SymmetricKeyAlgorithm = Utilities.GetSymmetricAlgorithm(securityStrengthInBits);
+
+            if (alg == AsymmetricAlgorithm.Ec)
+            {
+                HashAlgorithm = securityStrengthInBits switch
+                {
+                    <= 128 => HashAlgorithmTag.Sha256,
+                    <=192 => HashAlgorithmTag.Sha384,
+                    <= 256 or  > 256 => HashAlgorithmTag.Sha512,
+                };
+            }
 
 
         }

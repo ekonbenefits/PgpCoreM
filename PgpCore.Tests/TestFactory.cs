@@ -76,7 +76,7 @@ namespace PgpCoreM.Tests
 
         public Stream PublicKeyStream => GetFileStream(PublicKeyFileInfo);
 
-        public string UserName => _userName != null ? _userName : $"{_uniqueIdentifier}@email.com" ;
+        public string UserName => _userName != null ? _userName : $"TEST <{_uniqueIdentifier}@email.com>" ;
 
         public string Password => _password != null ? _password : _uniqueIdentifier;
 
@@ -102,7 +102,7 @@ namespace PgpCoreM.Tests
                     streamWriter.WriteLine(Constants.PRIVATEKEY1);
                 }
 
-                _userName = Constants.USERNAME1;
+                _userName = $"Test <{Constants.USERNAME1}>";
                 _password = Constants.PASSWORD1;
             }
             else if (keyType == KeyType.KnownGpg)
@@ -117,7 +117,7 @@ namespace PgpCoreM.Tests
                     streamWriter.WriteLine(Constants.PRIVATEGPGKEY1);
                 }
 
-                _userName = Constants.USERNAME1;
+                _userName = $"Test <{Constants.USERNAME1}>";
                 _password = Constants.PASSWORD1;
             }
         }
