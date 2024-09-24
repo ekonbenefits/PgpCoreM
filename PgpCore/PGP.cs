@@ -30,20 +30,22 @@ namespace PgpCoreM
 		private const int BufferSize = 0x10000;
 		private const string DefaultFileName = "name";
 
-        private readonly List<CompressionAlgorithmTag> _defaultCompressionAlgs =
+        public static readonly List<CompressionAlgorithmTag> DefaultCompressionAlgs =
         [
+			CompressionAlgorithmTag.ZLib,
+			CompressionAlgorithmTag.BZip2,
+            CompressionAlgorithmTag.Zip,
             CompressionAlgorithmTag.Uncompressed,
-            CompressionAlgorithmTag.Zip
         ];
 
-        private readonly List<HashAlgorithmTag> _defaultHashAlgs =
+        public static readonly List<HashAlgorithmTag> DefaultHashAlgs =
         [
             HashAlgorithmTag.Sha256,
 			HashAlgorithmTag.Sha384,
             HashAlgorithmTag.Sha512
         ];
 
-        private readonly List<SymmetricKeyAlgorithmTag> _defaultSymmetricKeyAlgs =
+        public static readonly List<SymmetricKeyAlgorithmTag> DefaultSymmetricKeyAlgs =
         [
             SymmetricKeyAlgorithmTag.Aes128,
 			SymmetricKeyAlgorithmTag.Aes192,
@@ -68,7 +70,7 @@ namespace PgpCoreM
                     yield return CompressionAlgorithm;
                  
 
-                    foreach (var alg in _defaultCompressionAlgs
+                    foreach (var alg in DefaultCompressionAlgs
                                  .Where(it=> it != CompressionAlgorithm))
                     {
                         yield return alg;
@@ -99,7 +101,7 @@ namespace PgpCoreM
                     yield return HashAlgorithm;
                   
 
-                    foreach (var alg in _defaultHashAlgs
+                    foreach (var alg in DefaultHashAlgs
                                  .Where(it => it != HashAlgorithm))
                     {
                         yield return alg;
@@ -127,7 +129,7 @@ namespace PgpCoreM
                     yield return SymmetricKeyAlgorithm;
 
 
-                    foreach (var alg in _defaultSymmetricKeyAlgs
+                    foreach (var alg in DefaultSymmetricKeyAlgs
                                  .Where(it => it != SymmetricKeyAlgorithm))
                     {
                         yield return alg;
@@ -138,7 +140,7 @@ namespace PgpCoreM
         }	
 
 
-        public CompressionAlgorithmTag CompressionAlgorithm { get; set; } = CompressionAlgorithmTag.Uncompressed;
+        public CompressionAlgorithmTag CompressionAlgorithm { get; set; } = CompressionAlgorithmTag.Zip;
 
         public SymmetricKeyAlgorithmTag SymmetricKeyAlgorithm { get; set; } = SymmetricKeyAlgorithmTag.Aes128;
 

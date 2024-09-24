@@ -23,7 +23,7 @@ namespace PgpCoreM.Tests.UnitTests
 
         public static IEnumerable<object[]> GetCompressionAlgorithimTags()
         {
-            foreach (CompressionAlgorithmTag compressionAlgorithmTag in TestHelper.GetEnumValues<CompressionAlgorithmTag>())
+            foreach (CompressionAlgorithmTag compressionAlgorithmTag in PGP.DefaultCompressionAlgs)
             {
                 yield return new object[] { compressionAlgorithmTag };
             }
@@ -51,7 +51,7 @@ namespace PgpCoreM.Tests.UnitTests
 
         public static IEnumerable<object[]> GetHashAlgorithimTags()
         {
-            foreach (HashAlgorithmTag hashAlgorithmTag in TestHelper.GetEnumValues<HashAlgorithmTag>())
+            foreach (HashAlgorithmTag hashAlgorithmTag in PGP.DefaultHashAlgs)
             {
                 yield return new object[] { hashAlgorithmTag };
             }
@@ -59,7 +59,7 @@ namespace PgpCoreM.Tests.UnitTests
 
         public static IEnumerable<object[]> GetSymmetricAlgorithimTags()
         {
-            foreach (SymmetricKeyAlgorithmTag symmetricKeyAlgorithmTag in TestHelper.GetEnumValues<SymmetricKeyAlgorithmTag>())
+            foreach (SymmetricKeyAlgorithmTag symmetricKeyAlgorithmTag in PGP.DefaultSymmetricKeyAlgs)
             {
                 // Exclude as null is not for encryption and safer is not supported.
                 if (symmetricKeyAlgorithmTag == SymmetricKeyAlgorithmTag.Null || symmetricKeyAlgorithmTag == SymmetricKeyAlgorithmTag.Safer)
