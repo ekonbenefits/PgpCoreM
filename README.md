@@ -1,15 +1,13 @@
 # PgpCoreM
 
-![.NET](/actions/workflows/build-on-pr.yml/badge.svg)
-
 A .NET Core class library forked from [PGPCore](https://github.com/mattosaurus/PgpCore).
 
-Forked to reduced algorithm support, add key support for Eliptic Curves, and to support having a key for signing and encryption in a given key ring. 
+Forked to reduced algorithm support, add key support for Eliptic Curves, and to support having a separate key for signing and encryption in a given key ring. 
 With these changes it's not a drop in replacement for the original library.
 
 # Installation
 
-Currently, you will need to compile yourself, not modified for general consumption at this time. Use and your own risk.
+Currently, you will need to compile yourself, not modified for general consumption at this time. Use at your own risk.
 
 ```C#
 using PgpCore;
@@ -558,28 +556,17 @@ string encryptedSignedContent = await pgp.DecryptAndVerifyAsync("String to decry
 The PGP object contains a variety of settings properties that can be used to determine how files are encrypted.
 ### CompressionAlgorithm
 The compression algorithim to be used on the message. This is applied prior to encryption, either to the message or the signed message.
-- Uncompressed - **Default**
+- Uncompressed
 - Zip
 - ZLib
 - BZip2
 ### SymmetricKeyAlgorithm
 The private key encryption algorithm.
-> Although TripleDes is the default, it is outdated and being [discouraged by security institutions like NIST](https://en.wikipedia.org/wiki/Triple_DES). Aes is recommended.
 
-- Null
-- Idea
-- TripleDes - **Default**
-- Cast5
-- Blowfish
-- Safer
-- Des
 - Aes128
 - Aes192
 - Aes256
-- Twofish
-- Camellia128
-- Camellia192
-- Camellia256
+
 ### PgpSignatureType
 The type of signature to be used for file signing.
 - BinaryDocument
@@ -598,15 +585,10 @@ The type of signature to be used for file signing.
 - Timestamp
 ### PublicKeyAlgorithm
 The public key encryption algorithim.
-- RsaGeneral - **Default**
 - RsaEncrypt
 - RsaSign
-- ElGamalEncrypt
-- Dsa
 - ECDH
 - ECDsa
-- ElGamalGeneral
-- DiffieHellman
 - EdDsa
 ### FileType
 Encoding to be used for the output file.
@@ -615,14 +597,8 @@ Encoding to be used for the output file.
 - UTF8
 ### HashAlgorithmTag
 The hash algorithim to be used by the signature.
-- MD5
-- Sha1 - **Default**
-- RipeMD160
-- DoubleSha
-- MD2
-- Tiger192
-- Haval5pass160
+
 - Sha256
 - Sha384
 - Sha512
-- Sha224
+
