@@ -1,23 +1,21 @@
-# PgpCore
+# PgpCoreM
 
-![.NET](https://github.com/mattosaurus/PgpCore/actions/workflows/build-on-pr.yml/badge.svg)
+![.NET](/actions/workflows/build-on-pr.yml/badge.svg)
 
-A .NET Core class library for using PGP.
+A .NET Core class library forked from [PGPCore](https://github.com/mattosaurus/PgpCore).
 
-This is based on <a href="https://github.com/Cinchoo/ChoPGP" alt="ChoPGP">ChoPGP</a> but updated to .NET Standard and to add in a missing utilities class.
+Forked to reduced algorithm support, add key support for Eliptic Curves, and to support having a key for signing and encryption in a given key ring. 
+With these changes it's not a drop in replacement for the original library.
 
 # Installation
-To use PgpCore in your C# project download it from [NuGet](https://www.nuget.org/packages/PgpCore).
 
-Once you have the PgpCore libraries properly referenced in your project, you can include calls to them in your code.
-
-Add the following namespaces to use the library:
+Currently, you will need to compile yourself, not modified for general consumption at this time. Use and your own risk.
 
 ```C#
 using PgpCore;
 ```
 # Dependencies
-* Portable.BouncyCastle (>= 1.9.0)
+* Portable.BouncyCastle (>= 2.4.0)
 
 # Usage
 This is intended for usage in projects [targeting .NET Standard 2.0](https://dotnet.microsoft.com/platform/dotnet-standard#versions).
@@ -58,7 +56,7 @@ using (PGP pgp = new PGP())
 }
 ```
 #### Inspect
-Inspect the provided file, stream or string and return a [PGPInspectResult](https://github.com/mattosaurus/PgpCore/blob/master/PgpCore/Models/PGPInspectResult.cs) object that contains details on the messages encryption and sign status as well as additional information on filename, headers, etc. where available. 
+Inspect the provided file, stream or string and return a [PGPInspectResult](https://github.com/ekonBenefits/PgpCoreM/blob/master/PgpCore/Models/PGPInspectResult.cs) object that contains details on the messages encryption and sign status as well as additional information on filename, headers, etc. where available. 
 
 [`gpg --list-packets "C:\TEMP\Content\encrypted.pgp"`](https://www.gnupg.org/gph/en/manual/x135.html)
 ### Inspect File

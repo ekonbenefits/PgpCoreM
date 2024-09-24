@@ -1,0 +1,3 @@
+2017: Cinchoo Inc - Original Work (ChoPG)
+2018-2024: mattosaurus - PGP Core Fork with major enhancements
+2024: Ekon Benefits - PGPCoreM fork with backwards incompatible changes to support modernized encryption standards
