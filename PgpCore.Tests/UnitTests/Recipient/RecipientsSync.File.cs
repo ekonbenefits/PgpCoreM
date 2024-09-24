@@ -38,7 +38,7 @@ namespace PgpCoreM.Tests.UnitTests.Recipient
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = ReadBestEncryptionPublicKey(publicKeyStream);
                     recipients.Single().Should().Be(publicKey.KeyId);
                 }
             }
@@ -72,13 +72,13 @@ namespace PgpCoreM.Tests.UnitTests.Recipient
 
                 using (Stream publicKeyStream = testFactory1.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = ReadBestEncryptionPublicKey(publicKeyStream);
                     recipients.Should().Contain(publicKey.KeyId);
                 }
 
                 using (Stream publicKeyStream = testFactory2.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = ReadBestEncryptionPublicKey(publicKeyStream);
                     recipients.Should().Contain(publicKey.KeyId);
                 }
             }

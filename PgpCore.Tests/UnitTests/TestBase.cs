@@ -69,7 +69,7 @@ namespace PgpCoreM.Tests.UnitTests
             }
         }
 
-        public static PgpPublicKey ReadPublicKey(Stream inputStream)
+        public static PgpPublicKey ReadMasterPublicKey(Stream inputStream)
         {
             PgpPublicKeyRingBundle pgpPub = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(inputStream));
             foreach (PgpPublicKeyRing kRing in pgpPub.GetKeyRings())
@@ -80,6 +80,18 @@ namespace PgpCoreM.Tests.UnitTests
                         return k;
                 }
             }
+            throw new ArgumentException("No encryption key found in public key ring.");
+        }
+
+        public static PgpPublicKey ReadBestEncryptionPublicKey(Stream inputStream)
+        {
+            PgpPublicKeyRingBundle pgpPub = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(inputStream));
+            foreach (PgpPublicKey k in pgpPub.GetKeyRings().SelectMany(Utilities.SortBestEncryptionKey))
+            {
+                if (k.IsEncryptionKey)
+                    return k;
+            }
+            
             throw new ArgumentException("No encryption key found in public key ring.");
         }
 

@@ -58,7 +58,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = publicKey = ReadMasterPublicKey(publicKeyStream);
                     var startTime = DateTime.UtcNow;
                     // If we successfully read the public key without exceptions, it is considered valid
                     publicKey.Should().NotBeNull();
@@ -131,7 +131,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = ReadMasterPublicKey(publicKeyStream);
                     // If we successfully read the public key without exceptions, it is considered valid
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
@@ -201,7 +201,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
-                    PgpPublicKey publicKey = ReadPublicKey(publicKeyStream);
+                    PgpPublicKey publicKey = ReadMasterPublicKey(publicKeyStream);
                     // If we successfully read the public key without exceptions, it is considered valid
                     publicKey.Should().NotBeNull();
                     publicKey.Version.Should().Be(4);
