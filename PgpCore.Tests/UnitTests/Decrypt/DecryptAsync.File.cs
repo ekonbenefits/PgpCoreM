@@ -30,7 +30,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -38,6 +38,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -60,7 +61,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo, armor: false);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -69,6 +70,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
                 File.ReadAllText(testFactory.EncryptedContentFileInfo.FullName).Should().NotStartWith("-----BEGIN PGP MESSAGE-----");
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -92,7 +94,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -100,6 +102,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -123,7 +126,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo, armor: false);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -132,6 +135,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
                 File.ReadAllText(testFactory.EncryptedContentFileInfo.FullName).Should().NotStartWith("-----BEGIN PGP MESSAGE-----");
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -155,7 +159,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -163,6 +167,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -186,7 +191,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo, armor: false);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -195,6 +200,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
                 File.ReadAllText(testFactory.EncryptedContentFileInfo.FullName).Should().NotStartWith("-----BEGIN PGP MESSAGE-----");
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -218,7 +224,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
             PgpInspectResult pgpInspectResult = await pgpDecrypt.InspectAsync(testFactory.EncryptedContentFileInfo);
 
             // Assert
@@ -227,6 +233,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             pgpInspectResult.SymmetricKeyAlgorithm.Should().Be(symmetricKeyAlgorithmTag);
@@ -252,7 +259,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo, armor: false);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
             PgpInspectResult pgpInspectResult = await pgpDecrypt.InspectAsync(testFactory.EncryptedContentFileInfo);
 
             // Assert
@@ -262,6 +269,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
                 File.ReadAllText(testFactory.EncryptedContentFileInfo.FullName).Should().NotStartWith("-----BEGIN PGP MESSAGE-----");
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             pgpInspectResult.SymmetricKeyAlgorithm.Should().Be(symmetricKeyAlgorithmTag);
@@ -352,8 +360,8 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpEncrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory2.DecryptedContentFileInfo);
+            var originalFileName1 = await pgpEncrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName2 = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory2.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -363,6 +371,8 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory2.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
                 File.ReadAllText(testFactory2.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName1);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName2);
             }
 
             // Teardown
@@ -389,7 +399,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncryptAndSign.EncryptAndSignAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -397,6 +407,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -487,7 +498,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncrypt.EncryptAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
-            await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecrypt.DecryptAsync(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -495,6 +506,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 testFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(testFactory.DecryptedContentFileInfo.FullName).Should().Be(testFactory.Content);
+                testFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
@@ -521,7 +533,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncryptAndSign.EncryptAndSignAsync(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
-            await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo);
+            var originalFileName = await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -529,6 +541,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 encryptTestFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 encryptTestFactory.DecryptedContentFileInfo.Exists.Should().BeTrue();
                 File.ReadAllText(encryptTestFactory.DecryptedContentFileInfo.FullName).Should().Be(encryptTestFactory.Content);
+                encryptTestFactory.ContentFileInfo.Name.Should().Be(originalFileName);
             }
 
             // Teardown
