@@ -26,6 +26,9 @@ namespace PgpCoreM
 		public PgpSecretKey SecretKey => SigningSecretKey;
 		public PgpSecretKeyRingBundle SecretKeys => _secretKeys.Value;
 
+
+
+
 		#endregion Instance Members (Public)
 
 		#region Instance Members (Private)
@@ -400,18 +403,21 @@ namespace PgpCoreM
 
 		#region Public Methods
 
-		public PgpPrivateKey FindSecretKey(long keyId)
-		{
-			if (SecretKeys == null)
-				throw new ArgumentNullException("No private keys found. These should be provided in EncryptionKeys constructor.");
+        public long SigningKeyId => SigningPrivateKey.KeyId;
 
-			PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
+        public long[] EncryptionKeyIds => _encryptKeys.Value.Select(it=>it.KeyId).ToArray();
+
+        public PgpPublicKey FindPublicKey(long keyId) => EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
+
+        (PgpPrivateKey privateKey, PgpSecretKey secretKey)? IEncryptionKeys.FindSecretKey(long keyId)
+        {
+            PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
 
 			if (pgpSecKey == null)
-				return null;
+                return null;
 
-			return pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray());
-		}
+			return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
+        }
 
 		/// <summary>
 		/// This method will try to find the key with the given keyId in a key ring and set it as the preferred key.

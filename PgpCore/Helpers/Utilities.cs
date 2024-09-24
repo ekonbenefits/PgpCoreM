@@ -23,6 +23,27 @@ namespace PgpCoreM
     /// <remarks>Basic utility class.</remarks>
     public static class Utilities
 	{
+
+        /// <summary>
+        /// Returns value that should not be null when used.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item">The item.</param>
+        /// <param name="exceptionMessage">optional exception message</param>
+        /// <returns></returns>
+        public static T NotNull<T>(this T? item, string exceptionMessage = null) where T : struct
+        {
+            if (item.HasValue) return item.Value;
+            throw new ArgumentNullException(nameof(item), exceptionMessage ?? "This item Cannot Be Null");
+        }
+
+        public static T NotNull<T>(this T item, string exceptionMessage = null) where T : class
+        {
+            if (item != null) return item;
+            throw new ArgumentNullException(nameof(item), exceptionMessage ?? "This item Cannot Be Null");
+        }
+
+
         public static int AsymmetricStrength(AsymmetricAlgorithm asymmetricAlgorithm, int symmetricStrength) 
             => AsymmetricKeyGeneratorParams(asymmetricAlgorithm, symmetricStrength).signParams.Strength;
 

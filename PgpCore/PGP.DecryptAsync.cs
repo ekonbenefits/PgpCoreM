@@ -2,6 +2,7 @@
 using PgpCoreM.Extensions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using PgpCoreM.Abstractions;
 using PgpCoreM.Helpers;
@@ -71,11 +72,11 @@ namespace PgpCoreM
             using (CompositeDisposable disposables = new CompositeDisposable())
             {
                 // decrypt
-                PgpPrivateKey privateKey = null;
+                (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? privateKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
                 if (enc != null)
                 {
-                    foreach (PgpPublicKeyEncryptedData publicKeyEncryptedData in enc.GetEncryptedDataObjects())
+                    foreach (var publicKeyEncryptedData in enc.GetEncryptedDataObjects().OfType<PgpPublicKeyEncryptedData>())
                     {
                         privateKey = EncryptionKeys.FindSecretKey(publicKeyEncryptedData.KeyId);
 
@@ -89,7 +90,7 @@ namespace PgpCoreM
                     if (privateKey == null)
                         throw new ArgumentException("Secret key for message not found.");
 
-                    Stream clear = pbe.GetDataStream(privateKey).DisposeWith(disposables);
+                    Stream clear = pbe.GetDataStream(privateKey.NotNull().PrivateKey).DisposeWith(disposables);
                     PgpObjectFactory plainFact = new PgpObjectFactory(clear);
 
                     message = plainFact.NextPgpObject();
@@ -226,12 +227,12 @@ namespace PgpCoreM
             using (CompositeDisposable disposables = new CompositeDisposable())
             {
                 // decrypt
-                PgpPrivateKey privateKey = null;
+                (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? privateKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
                 if (encryptedDataList != null)
                 {
-                    foreach (PgpPublicKeyEncryptedData publicKeyEncryptedData in
-                             encryptedDataList.GetEncryptedDataObjects())
+                    foreach (var publicKeyEncryptedData in
+                             encryptedDataList.GetEncryptedDataObjects().OfType<PgpPublicKeyEncryptedData>())
                     {
                         privateKey = EncryptionKeys.FindSecretKey(publicKeyEncryptedData.KeyId);
 
@@ -245,7 +246,7 @@ namespace PgpCoreM
                     if (privateKey == null)
                         throw new ArgumentException("Secret key for message not found.");
 
-                    Stream clear = pbe.GetDataStream(privateKey).DisposeWith(disposables);
+                    Stream clear = pbe.GetDataStream(privateKey.NotNull().PrivateKey).DisposeWith(disposables);
                     PgpObjectFactory plainFact = new PgpObjectFactory(clear);
 
                     message = plainFact.NextPgpObject();

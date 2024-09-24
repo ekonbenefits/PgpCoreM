@@ -495,9 +495,9 @@ namespace PgpCoreM
 			var encryptedDataGenerator =
 				new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
             bool encryptionRun = false;
-			foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in EncryptionKeys.PublicKeyRings)
+			foreach (var key in EncryptionKeys.EncryptionKeyIds)
 			{
-				PgpPublicKey publicKey = publicKeyRing.PreferredEncryptionKey ?? publicKeyRing.DefaultEncryptionKey;
+				PgpPublicKey publicKey = EncryptionKeys.FindPublicKey(key);
                 if (publicKey == null)
                 {
                     continue;
@@ -554,11 +554,15 @@ namespace PgpCoreM
         #region InitSignatureGenerator
 
         private PgpSignatureGenerator InitSignatureGenerator(Stream compressedOut)
-		{
-			PublicKeyAlgorithmTag tag = EncryptionKeys.SigningSecretKey.PublicKey.Algorithm;
-			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
-			pgpSignatureGenerator.InitSign(PgpSignature.BinaryDocument, EncryptionKeys.SigningPrivateKey);
-			foreach (string userId in EncryptionKeys.SigningSecretKey.PublicKey.GetUserIds())
+        {
+			var keyMaterial = EncryptionKeys.FindSecretKey(EncryptionKeys.SigningKeyId);
+
+            PublicKeyAlgorithmTag tag = keyMaterial.NotNull().SecretKey.PublicKey.Algorithm;
+
+			
+            PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
+			pgpSignatureGenerator.InitSign(PgpSignature.BinaryDocument, keyMaterial.NotNull().PrivateKey);
+            foreach (string userId in keyMaterial.NotNull().SecretKey.PublicKey.GetUserIds())
 			{
 				PgpSignatureSubpacketGenerator subPacketGenerator = new PgpSignatureSubpacketGenerator();
 				subPacketGenerator.AddSignerUserId(false, userId);
@@ -577,11 +581,13 @@ namespace PgpCoreM
 
 		private PgpSignatureGenerator InitClearSignatureGenerator(ArmoredOutputStream armoredOutputStream)
 		{
-			PublicKeyAlgorithmTag tag = EncryptionKeys.SigningSecretKey.PublicKey.Algorithm;
+            var keyMaterial = EncryptionKeys.FindSecretKey(EncryptionKeys.SigningKeyId);
+
+            PublicKeyAlgorithmTag tag = keyMaterial.NotNull().SecretKey.PublicKey.Algorithm;
 			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
-			pgpSignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, EncryptionKeys.SigningPrivateKey);
+			pgpSignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, keyMaterial.NotNull().PrivateKey));
 			armoredOutputStream.BeginClearText(HashAlgorithm);
-			foreach (string userId in EncryptionKeys.SigningSecretKey.PublicKey.GetUserIds())
+			foreach (string userId in keyMaterial.NotNull().SecretKey.PublicKey.GetUserIds())
 			{
 				PgpSignatureSubpacketGenerator subPacketGenerator = new PgpSignatureSubpacketGenerator();
 				subPacketGenerator.AddSignerUserId(false, userId);
