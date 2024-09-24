@@ -30,26 +30,25 @@ namespace PgpCoreM
 		private const int BufferSize = 0x10000;
 		private const string DefaultFileName = "name";
 
-        private List<CompressionAlgorithmTag> _defaultCompressionAlgs =
-            new()
-            {
-                CompressionAlgorithmTag.Uncompressed,
-                CompressionAlgorithmTag.Zip
-            };
+        private readonly List<CompressionAlgorithmTag> _defaultCompressionAlgs =
+        [
+            CompressionAlgorithmTag.Uncompressed,
+            CompressionAlgorithmTag.Zip
+        ];
 
-        private List<HashAlgorithmTag> _defaultHashAlgs = new()
-        {
+        private readonly List<HashAlgorithmTag> _defaultHashAlgs =
+        [
             HashAlgorithmTag.Sha1,
             HashAlgorithmTag.Sha256,
-            HashAlgorithmTag.Sha512,
-        };
+            HashAlgorithmTag.Sha512
+        ];
 
-        private List<SymmetricKeyAlgorithmTag> _defaultSymmetricKeyAlgs = new()
-        {
-            SymmetricKeyAlgorithmTag.Aes256,
+        private readonly List<SymmetricKeyAlgorithmTag> _defaultSymmetricKeyAlgs =
+        [
             SymmetricKeyAlgorithmTag.Aes128,
-			SymmetricKeyAlgorithmTag.Aes192
-        };
+			SymmetricKeyAlgorithmTag.Aes192,
+            SymmetricKeyAlgorithmTag.Aes256
+        ];
 
         private CompressionAlgorithmTag[] _preferredCompressionAlgorithms;
 
@@ -61,9 +60,9 @@ namespace PgpCoreM
                     return _preferredCompressionAlgorithms;
                 }
 
-                return preferredAlgHelper().ToArray();
+                return PreferredAlgHelper().ToArray();
 
-                IEnumerable<CompressionAlgorithmTag> preferredAlgHelper()
+                IEnumerable<CompressionAlgorithmTag> PreferredAlgHelper()
                 {
                    
                     yield return CompressionAlgorithm;
@@ -141,7 +140,7 @@ namespace PgpCoreM
 
         public CompressionAlgorithmTag CompressionAlgorithm { get; set; } = CompressionAlgorithmTag.Uncompressed;
 
-		public SymmetricKeyAlgorithmTag SymmetricKeyAlgorithm { get; set; } = SymmetricKeyAlgorithmTag.Aes256;
+        public SymmetricKeyAlgorithmTag SymmetricKeyAlgorithm { get; set; } = SymmetricKeyAlgorithmTag.Aes128;
 
 
 		public AsymmetricAlgorithm PublicKeyAlgorithm { get; set; } = AsymmetricAlgorithm.Rsa;
@@ -152,14 +151,34 @@ namespace PgpCoreM
 
 		public IEncryptionKeys EncryptionKeys { get; private set; }
 
-        public int SecurityStrengthInBits { get; set; } = 256;
+        public int SecurityStrengthInBits { get; set; } = 128;
 
 		#region Constructor
 
 		public PGP()
 		{ }
 
-		public PGP(IEncryptionKeys encryptionKeys)
+        public PGP(int securityStrengthInBits, AsymmetricAlgorithm alg = AsymmetricAlgorithm.Rsa)
+        {
+			SecurityStrengthInBits = securityStrengthInBits;
+			PublicKeyAlgorithm = alg;
+            switch (SecurityStrengthInBits)
+            {
+                case <= 128:
+                    SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes128;
+                    break;
+				case <= 192:
+					SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes192;
+					break;
+				case <= 256 or > 256:
+                    SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes256;
+                    break;
+            }
+
+
+        }
+
+        public PGP(IEncryptionKeys encryptionKeys)
 		{
 			EncryptionKeys = encryptionKeys;
 		}

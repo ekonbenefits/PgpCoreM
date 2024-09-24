@@ -13,6 +13,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
     {
         [Theory]
         [InlineData(AsymmetricAlgorithm.Rsa)]
+        [InlineData(AsymmetricAlgorithm.Ec)]
         [InlineData(AsymmetricAlgorithm.Ec25519)]
         public void GenerateKey_CreatePublicAndPrivateKeys_ShouldCreateKeysWithDefaultProperties(AsymmetricAlgorithm alg)
         {
@@ -53,7 +54,7 @@ namespace PgpCoreM.Tests.UnitTests.GenerateKey
                     publicKey.IsEncryptionKey.Should().BeFalse();
                     publicKey.IsMasterKey.Should().BeTrue();
                     publicKey.IsRevoked().Should().BeFalse();
-                    publicKey.BitStrength.Should().Be(Utilities.SecStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
+                    publicKey.BitStrength.Should().Be(Utilities.AsymmetricStrength(pgp.PublicKeyAlgorithm, pgp.SecurityStrengthInBits));
                 }
 
             }

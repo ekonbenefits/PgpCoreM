@@ -61,37 +61,44 @@ namespace PgpCoreM
             var pubKeyAlg = PublicKeyAlgorithm;
             var secStrength = SecurityStrengthInBits;
 
-            int algStrength = Utilities.SecStrength(pubKeyAlg, secStrength);
+            var keyParams = Utilities.AsymmetricKeyGeneratorParams(pubKeyAlg, secStrength);
 
             switch (PublicKeyAlgorithm)
             {
               
                 case AsymmetricAlgorithm.Ec25519:
-                    kpgSign = new ECKeyPairGenerator();
-                    kpgSign.Init(new KeyGenerationParameters(PGP.SecRandom, algStrength));
+                    kpgSign = new Ed25519KeyPairGenerator();
+                    kpgSign.Init(keyParams.signParams);
 
                     kpgEncrypt = new X25519KeyPairGenerator();
-                    kpgEncrypt.Init(new KeyGenerationParameters(PGP.SecRandom, algStrength));
+                    kpgEncrypt.Init(keyParams.encryptParameters);
+                    break;
+                case AsymmetricAlgorithm.Ec:
+                    kpgSign = new ECKeyPairGenerator();
+                    kpgSign.Init(keyParams.signParams);
+
+                    kpgEncrypt = new ECKeyPairGenerator();
+                    kpgEncrypt.Init(keyParams.encryptParameters);
                     break;
                 case AsymmetricAlgorithm.Rsa:
                 default:
                     kpgSign = new RsaKeyPairGenerator();
-                    kpgSign.Init(new KeyGenerationParameters(PGP.SecRandom, algStrength));
+                    kpgSign.Init(keyParams.signParams);
 
                     kpgEncrypt = new RsaKeyPairGenerator();
-                    kpgEncrypt.Init(new KeyGenerationParameters(PGP.SecRandom, algStrength));
+                    kpgEncrypt.Init(keyParams.encryptParameters);
                     break;
             }
 
             var (publicKeySignAlgo, publicKeyEncAlgo) = PublicKeyAlgorithm switch
             {
-                AsymmetricAlgorithm.Ec25519 => (PublicKeyAlgorithmTag.ECDsa, PublicKeyAlgorithmTag.ECDH),
+                AsymmetricAlgorithm.Ec 
+                    => (PublicKeyAlgorithmTag.ECDsa, PublicKeyAlgorithmTag.ECDH),
+                AsymmetricAlgorithm.Ec25519
+                    => (PublicKeyAlgorithmTag.EdDsa, PublicKeyAlgorithmTag.ECDH),
                 AsymmetricAlgorithm.Rsa => (PublicKeyAlgorithmTag.RsaSign, PublicKeyAlgorithmTag.RsaEncrypt),
                 _ => throw new NotSupportedException("Unsupported public key algorithm")
             };
-          
-
-            
 
             PgpKeyPair masterKey = new PgpKeyPair(publicKeySignAlgo, kpgSign.GenerateKeyPair(), DateTime.UtcNow);
             PgpKeyPair encKey = new PgpKeyPair(publicKeyEncAlgo, kpgEncrypt.GenerateKeyPair(), DateTime.UtcNow);
@@ -112,7 +119,7 @@ namespace PgpCoreM
                 SymmetricKeyAlgorithm,
                 HashAlgorithm,
                 password?.ToCharArray(),
-                HashAlgorithm == HashAlgorithmTag.Sha1,
+                true, //for key ids
                 signHashGen.Generate(),
                 null,
                 PGP.SecRandom);

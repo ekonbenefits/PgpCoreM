@@ -16,26 +16,50 @@ using Org.BouncyCastle.Bcpg.Sig;
 using PgpCoreM.Helpers;
 using PgpCoreM.Extensions;
 
+
 namespace PgpCoreM
 {
     /// <remarks>Basic utility class.</remarks>
     public static class Utilities
 	{
-        public static int SecStrength(AsymmetricAlgorithm asymmetricAlgorithm, int securityStrength)
+        public static int AsymmetricStrength(AsymmetricAlgorithm asymmetricAlgorithm, int symmetricStrength) 
+            => AsymmetricKeyGeneratorParams(asymmetricAlgorithm, symmetricStrength).signParams.Strength;
+
+
+        /// <summary>
+        /// Generate the parameters for the key generator based on the algorithm and strength
+        /// Relative key strengths from https://security.stackexchange.com/a/143086/1593
+        /// </summary>
+        /// <param name="asymmetricAlgorithm"></param>
+        /// <param name="symmetricStrength"></param>
+        /// <returns></returns>
+        public static (KeyGenerationParameters signParams, KeyGenerationParameters encryptParameters) AsymmetricKeyGeneratorParams(AsymmetricAlgorithm asymmetricAlgorithm, int symmetricStrength)
         {
+
+            static (KeyGenerationParameters signParams, KeyGenerationParameters encryptParameters) CreateEc(int strength)
+                => (new (PGP.SecRandom, strength), new (PGP.SecRandom, strength));
+
+            static (KeyGenerationParameters signParams, KeyGenerationParameters encryptParameters) CreateRsa(int strength, int n) 
+                => (new RsaKeyGenerationParameters(BigInteger.ValueOf(0x10001),PGP.SecRandom, strength, n),
+                    new RsaKeyGenerationParameters(BigInteger.ValueOf(0x10001), PGP.SecRandom, strength, n));
             return asymmetricAlgorithm switch
             {
-                AsymmetricAlgorithm.Rsa => securityStrength switch
+
+                AsymmetricAlgorithm.Ec => symmetricStrength switch
                 {
-                    128 => 2048,
-                    192 => 3072,
-                    256 => 4096,
-                    _ => 2048
+                    <= 128 => CreateEc(256),
+                    <= 192 => CreateEc(384),
+                    <= 256 or > 256 => CreateEc(521),
                 },
-                _ => securityStrength
+                AsymmetricAlgorithm.Ec25519 => CreateEc(256),
+                AsymmetricAlgorithm.Rsa or _ => symmetricStrength switch
+                {
+                    <= 128 => CreateRsa(3072,256),
+                    <= 192 => CreateRsa(7680, 384),
+                    <= 256 or > 256 => CreateRsa(15360, 511),
+                }
             };
         }
-
 
         public static MPInteger[] DsaSigToMpi(
 			byte[] encoding)
