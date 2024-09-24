@@ -33,7 +33,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -66,7 +66,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, armor: false);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -101,7 +101,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -135,7 +135,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, armor: false);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -170,7 +170,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -204,7 +204,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, armor: false);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -239,7 +239,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             PgpInspectResult pgpInspectResult = pgpDecrypt.Inspect(testFactory.EncryptedContentStream);
 
@@ -277,7 +277,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, armor: false);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             PgpInspectResult pgpInspectResult = pgpDecrypt.Inspect(testFactory.EncryptedContentStream);
 
@@ -384,10 +384,10 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             using (Stream outputFileStream = testFactory2.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -426,7 +426,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncryptAndSign.EncryptAndSign(testFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = testFactory.DecryptedContentFileInfo.Create())
-                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream);
+                pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -461,7 +461,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             {
                 using (Stream outputStream = testFactory.DecryptedContentFileInfo.Create())
                 {
-                    Action act = () => pgpDecrypt.Decrypt(testFactory.ContentStream, outputStream);
+                    Action act = () => pgpDecrypt.Decrypt(testFactory.ContentStream, outputStream, out _);
                     act.Should().Throw<ArgumentException>().Where(e => e.Message.StartsWith("Failed to detect encrypted content format."));
                 }
             }
@@ -497,7 +497,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             {
                 using (Stream outputStream = testFactory.DecryptedContentFileInfo.Create())
                 {
-                    Action act = () => pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputStream);
+                    Action act = () => pgpDecrypt.Decrypt(testFactory.EncryptedContentStream, outputStream, out _);
                     act.Should().Throw<ArgumentException>().Where(e => e.Message == "Secret key for message not found.");
                 }
             }
@@ -529,7 +529,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.ContentStream, outputFileStream);
 
             using (Stream outputFileStream = signTestFactory.DecryptedContentFileInfo.Create())
-                pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentStream, outputFileStream);
+                pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentStream, outputFileStream, out _);
 
             // Assert
             using (new AssertionScope())
@@ -572,7 +572,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
                 using (Stream inputStream = encryptTestFactory.EncryptedContentFileInfo.OpenRead())
                 using (Stream outputStream = signTestFactory.DecryptedContentFileInfo.Create())
                 {
-                    Action act = () => pgpDecryptAndVerify.DecryptAndVerify(inputStream, outputStream);
+                    Action act = () => pgpDecryptAndVerify.DecryptAndVerify(inputStream, outputStream, out _);
                     act.Should().Throw<PgpException>().Where(e => e.Message == "Failed to verify file.");
                 }
 

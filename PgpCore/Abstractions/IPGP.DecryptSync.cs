@@ -8,18 +8,18 @@ namespace PgpCoreM.Abstractions
 {
     public interface IDecryptSync : IDisposable
     {
-        void Decrypt(FileInfo inputFile, FileInfo outputFile);
-        void Decrypt(Stream inputStream, Stream outputStream);
-        string Decrypt(string input);
-        void DecryptAndVerify(FileInfo inputFile, FileInfo outputFile);
-        void DecryptAndVerify(Stream inputStream, Stream outputStream);
-        string DecryptAndVerify(string input);
+        void Decrypt(FileInfo inputFile, FileInfo outputFile, out string originalFileName);
+        void Decrypt(Stream inputStream, Stream outputStream, out string originalFileName);
+        string Decrypt(string input, out string originalFileName);
+        void DecryptAndVerify(FileInfo inputFile, FileInfo outputFile, out string originalFileName);
+        void DecryptAndVerify(Stream inputStream, Stream outputStream, out string originalFileName);
+        string DecryptAndVerify(string input, out string originalFileName);
 
-        void DecryptFile(FileInfo inputFile, FileInfo outputFile);
-        void DecryptStream(Stream inputStream, Stream outputStream);
-        string DecryptArmoredString(string input);
-        void DecryptFileAndVerify(FileInfo inputFile, FileInfo outputFile);
-        void DecryptStreamAndVerify(Stream inputStream, Stream outputStream);
-        string DecryptArmoredStringAndVerify(string input);
+        void DecryptFile(FileInfo inputFile, FileInfo outputFile, out string originalFileName);
+        void DecryptStream(Stream inputStream, Stream outputStream, out string originalFileName);
+        string DecryptArmoredString(string input, out string originalFileName);
+        void DecryptFileAndVerify(FileInfo inputFile, FileInfo outputFile, out string originalFileName);
+        void DecryptStreamAndVerify(Stream inputStream, Stream outputStream, out string originalFileName);
+        string DecryptArmoredStringAndVerify(string input, out string originalFileName);
     }
 }

@@ -8,18 +8,18 @@ namespace PgpCoreM.Abstractions
 {
     public interface IDecryptAsync : IDisposable
     {
-        Task DecryptAsync(FileInfo inputFile, FileInfo outputFile);
-        Task DecryptAsync(Stream inputStream, Stream outputStream);
-        Task<string> DecryptAsync(string input);
-        Task DecryptAndVerifyAsync(FileInfo inputFile, FileInfo outputFile);
-        Task DecryptAndVerifyAsync(Stream inputStream, Stream outputStream);
-        Task<string> DecryptAndVerifyAsync(string input);
+        Task<string> DecryptAsync(FileInfo inputFile, FileInfo outputFile);
+        Task<string> DecryptAsync(Stream inputStream, Stream outputStream);
+        Task<(string data, string originalFileName)> DecryptAsync(string input);
+        Task<string> DecryptAndVerifyAsync(FileInfo inputFile, FileInfo outputFile);
+        Task<string> DecryptAndVerifyAsync(Stream inputStream, Stream outputStream);
+        Task<(string data, string originalFileName)> DecryptAndVerifyAsync(string input);
 
-        Task DecryptFileAsync(FileInfo inputFile, FileInfo outputFile);
-        Task DecryptStreamAsync(Stream inputStream, Stream outputStream);
-        Task<string> DecryptArmoredStringAsync(string input);
-        Task DecryptFileAndVerifyAsync(FileInfo inputFile, FileInfo outputFile);
-        Task DecryptStreamAndVerifyAsync(Stream inputStream, Stream outputStream);
-        Task<string> DecryptArmoredStringAndVerifyAsync(string input);
+        Task<string> DecryptFileAsync(FileInfo inputFile, FileInfo outputFile);
+        Task<string> DecryptStreamAsync(Stream inputStream, Stream outputStream);
+        Task<(string data, string originalFileName)> DecryptArmoredStringAsync(string input);
+        Task<string> DecryptFileAndVerifyAsync(FileInfo inputFile, FileInfo outputFile);
+        Task<string> DecryptStreamAndVerifyAsync(Stream inputStream, Stream outputStream);
+        Task<(string data, string originalFileName)> DecryptArmoredStringAndVerifyAsync(string input);
     }
 }

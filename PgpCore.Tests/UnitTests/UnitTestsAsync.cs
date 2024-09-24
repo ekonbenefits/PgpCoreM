@@ -2098,7 +2098,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptArmoredStringAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent, _ )= await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2128,7 +2128,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptArmoredStringAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2154,7 +2154,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgp.EncryptArmoredStringAsync(testFactory.Content);
-            string decryptedContent = await pgp.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent, _) = await pgp.DecryptArmoredStringAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2191,8 +2191,8 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptArmoredStringAsync(testFactory.Content);
-            string decryptedContent1 = await pgpEncrypt.DecryptArmoredStringAsync(encryptedContent);
-            string decryptedContent2 = await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent1, _) = await pgpEncrypt.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent2, _) = await pgpDecrypt.DecryptArmoredStringAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2219,7 +2219,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgp.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            string decryptedContent = await pgp.DecryptArmoredStringAsync(encryptedContent);
+            var (decryptedContent, _) = await pgp.DecryptArmoredStringAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2256,8 +2256,8 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedAndSignedContent = await pgpEncrypt.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            string decryptedContent1 = await pgpEncrypt.DecryptArmoredStringAsync(encryptedAndSignedContent);
-            string decryptedContent2 = await pgpDecrypt.DecryptArmoredStringAsync(encryptedAndSignedContent);
+            var (decryptedContent1, _) = await pgpEncrypt.DecryptArmoredStringAsync(encryptedAndSignedContent);
+            var(decryptedContent2, _) = await pgpDecrypt.DecryptArmoredStringAsync(encryptedAndSignedContent);
 
             // Assert
             Assert.NotNull(encryptedAndSignedContent);
@@ -2287,7 +2287,7 @@ namespace PgpCoreM.Tests
             // Act
             string decryptedContent = null;
             string encryptedContent = await pgp.EncryptArmoredStringAsync(testFactory.Content);
-            var ex = await Assert.ThrowsAsync<PgpException>(async () => decryptedContent = await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent));
+            var ex = await Assert.ThrowsAsync<PgpException>(async () => await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent));
 
             // Assert
             Assert.Equal("File was not signed.", ex.Message);
@@ -2318,7 +2318,7 @@ namespace PgpCoreM.Tests
             // Act
             string decryptedContent = null;
             string encryptedContent = await pgpEncrypt.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            var ex = await Assert.ThrowsAsync<PgpException>(async () => decryptedContent = await pgpDecrypt.DecryptArmoredStringAndVerifyAsync(encryptedContent));
+            var ex = await Assert.ThrowsAsync<PgpException>(async () =>  await pgpDecrypt.DecryptArmoredStringAndVerifyAsync(encryptedContent));
 
             // Assert
             Assert.Equal("Failed to verify file.", ex.Message);
@@ -2343,7 +2343,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgp.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            string decryptedContent = await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent);
+            var (decryptedContent, _ )= await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2371,7 +2371,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgp.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            string decryptedContent = await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent);
+            var (decryptedContent, _) = await pgp.DecryptArmoredStringAndVerifyAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);
@@ -2401,7 +2401,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptArmoredStringAndSignAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptArmoredStringAndVerifyAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptArmoredStringAndVerifyAsync(encryptedContent);
 
             // Assert
             Assert.NotNull(encryptedContent);

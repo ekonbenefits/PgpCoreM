@@ -18,7 +18,7 @@ namespace PgpCoreM
         /// </summary>
         /// <param name="inputFile">PGP encrypted data file</param>
         /// <param name="outputFile">Output PGP decrypted file</param>
-        public async Task DecryptAsync(FileInfo inputFile, FileInfo outputFile)
+        public async Task<string> DecryptAsync(FileInfo inputFile, FileInfo outputFile)
         {
             if (inputFile == null)
                 throw new ArgumentException("InputFile");
@@ -32,7 +32,7 @@ namespace PgpCoreM
 
             using (Stream inputStream = inputFile.OpenRead())
             using (Stream outStream = outputFile.OpenWrite())
-                await DecryptAsync(inputStream, outStream);
+                return await DecryptAsync(inputStream, outStream);
         }
 
         /// <summary>
@@ -41,8 +41,9 @@ namespace PgpCoreM
         /// <param name="inputStream">PGP encrypted data stream</param>
         /// <param name="outputStream">Output PGP decrypted stream</param>
         /// <returns></returns>
-        public async Task DecryptAsync(Stream inputStream, Stream outputStream)
+        public async Task<string> DecryptAsync(Stream inputStream, Stream outputStream)
         {
+            string originalFileName;
             if (inputStream == null)
                 throw new ArgumentException("InputStream");
             if (outputStream == null)
@@ -110,18 +111,21 @@ namespace PgpCoreM
                         message = objectFactory.NextPgpObject();
                         var literalData = (PgpLiteralData)message;
                         Stream unc = literalData.GetInputStream();
+                        originalFileName = literalData.FileName;
                         await StreamHelper.PipeAllAsync(unc, outputStream);
                     }
                     else
                     {
                         PgpLiteralData literalData = (PgpLiteralData)message;
                         Stream unc = literalData.GetInputStream();
+                        originalFileName = literalData.FileName;
                         await StreamHelper.PipeAllAsync(unc, outputStream);
                     }
                 }
                 else if (message is PgpLiteralData literalData)
                 {
                     Stream unc = literalData.GetInputStream();
+                    originalFileName = literalData.FileName;
                     await StreamHelper.PipeAllAsync(unc, outputStream);
 
                     if (pbe.IsIntegrityProtected())
@@ -137,28 +141,30 @@ namespace PgpCoreM
                 else
                     throw new PgpException("Message is not a simple encrypted file.");
             }
+
+            return originalFileName;
         }
 
         /// <summary>
         /// PGP decrypt a given string.
         /// </summary>
         /// <param name="input">PGP encrypted string</param>
-        public async Task<string> DecryptAsync(string input)
+        public async Task<(string data, string originalFileName)> DecryptAsync(string input)
         {
             using (Stream inputStream = await input.GetStreamAsync())
             using (Stream outputStream = new MemoryStream())
             {
-                await DecryptAsync(inputStream, outputStream);
+                var originalFileName = await DecryptAsync(inputStream, outputStream);
                 outputStream.Seek(0, SeekOrigin.Begin);
-                return await outputStream.GetStringAsync();
+                return (await outputStream.GetStringAsync(), originalFileName);
             }
         }
 
-        public async Task DecryptFileAsync(FileInfo inputFile, FileInfo outputFile) => await DecryptAsync(inputFile, outputFile);
+        public async Task<string> DecryptFileAsync(FileInfo inputFile, FileInfo outputFile) => await DecryptAsync(inputFile, outputFile);
 
-        public async Task DecryptStreamAsync(Stream inputStream, Stream outputStream) => await DecryptAsync(inputStream, outputStream);
+        public async Task<string> DecryptStreamAsync(Stream inputStream, Stream outputStream) => await DecryptAsync(inputStream, outputStream);
 
-        public async Task<string> DecryptArmoredStringAsync(string input) => await DecryptAsync(input);
+        public async Task<(string data, string originalFileName)> DecryptArmoredStringAsync(string input) => await DecryptAsync(input);
 
         #endregion DecryptAsync
 
@@ -171,7 +177,7 @@ namespace PgpCoreM
         /// </summary>
         /// <param name="inputFile">PGP encrypted data file path to be decrypted and verified</param>
         /// <param name="outputFile">Output PGP decrypted and verified file path</param>
-        public async Task DecryptAndVerifyAsync(FileInfo inputFile, FileInfo outputFile)
+        public async Task<string> DecryptAndVerifyAsync(FileInfo inputFile, FileInfo outputFile)
         {
             if (inputFile == null)
                 throw new ArgumentException("InputFile");
@@ -185,7 +191,7 @@ namespace PgpCoreM
 
             using (Stream inputStream = inputFile.OpenRead())
             using (Stream outStream = outputFile.OpenWrite())
-                await DecryptAndVerifyAsync(inputStream, outStream);
+                return await DecryptAndVerifyAsync(inputStream, outStream);
         }
 
         /// <summary>
@@ -195,8 +201,9 @@ namespace PgpCoreM
         /// </summary>
         /// <param name="inputStream">PGP encrypted data stream to be decrypted and verified</param>
         /// <param name="outputStream">Output PGP decrypted and verified stream</param>
-        public async Task DecryptAndVerifyAsync(Stream inputStream, Stream outputStream)
+        public async Task<String> DecryptAndVerifyAsync(Stream inputStream, Stream outputStream)
         {
+            string originalFileName;
             PgpObjectFactory objFactory = new PgpObjectFactory(PgpUtilities.GetDecoderStream(inputStream));
 
             PgpObject obj = objFactory.NextPgpObject();
@@ -299,6 +306,7 @@ namespace PgpCoreM
                         message = objectFactory.NextPgpObject();
                         var literalData = (PgpLiteralData)message;
                         Stream unc = literalData.GetInputStream();
+                        originalFileName = literalData.FileName;
                         await StreamHelper.PipeAllAsync(unc, outputStream);
                     }
                     else
@@ -309,6 +317,7 @@ namespace PgpCoreM
                 else if (message is PgpLiteralData literalData)
                 {
                     Stream unc = literalData.GetInputStream();
+                    originalFileName = literalData.FileName;
                     await StreamHelper.PipeAllAsync(unc, outputStream);
 
                     if (pbe.IsIntegrityProtected())
@@ -322,6 +331,8 @@ namespace PgpCoreM
                 else
                     throw new PgpException("File was not signed.");
             }
+
+            return originalFileName;
         }
 
         /// <summary>
@@ -330,22 +341,22 @@ namespace PgpCoreM
         /// It will not work with a file that was signed and encrypted separately in a 2 step process.
         /// </summary>
         /// <param name="input">PGP encrypted string to be decrypted and verified</param>
-        public async Task<string> DecryptAndVerifyAsync(string input)
+        public async Task<(string data, string originalFileName)> DecryptAndVerifyAsync(string input)
         {
             using (Stream inputStream = await input.GetStreamAsync())
             using (Stream outputStream = new MemoryStream())
             {
-                await DecryptAndVerifyAsync(inputStream, outputStream);
+                var originalFileName  = await DecryptAndVerifyAsync(inputStream, outputStream);
                 outputStream.Seek(0, SeekOrigin.Begin);
-                return await outputStream.GetStringAsync();
+                return (await outputStream.GetStringAsync(), originalFileName);
             }
         }
 
-        public async Task DecryptFileAndVerifyAsync(FileInfo inputFile, FileInfo outputFile) => await DecryptAndVerifyAsync(inputFile, outputFile);
+        public async Task<string> DecryptFileAndVerifyAsync(FileInfo inputFile, FileInfo outputFile) => await DecryptAndVerifyAsync(inputFile, outputFile);
 
-        public async Task DecryptStreamAndVerifyAsync(Stream inputStream, Stream outputStream) => await DecryptAndVerifyAsync(inputStream, outputStream);
+        public async Task<string> DecryptStreamAndVerifyAsync(Stream inputStream, Stream outputStream) => await DecryptAndVerifyAsync(inputStream, outputStream);
 
-        public async Task<string> DecryptArmoredStringAndVerifyAsync(string input) => await DecryptAndVerifyAsync(input);
+        public async Task<(string data, string originalFileName)> DecryptArmoredStringAndVerifyAsync(string input) => await DecryptAndVerifyAsync(input);
 
         #endregion DecryptAndVerifyAsync
     }

@@ -30,7 +30,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = pgpEncrypt.Encrypt(testFactory.Content);
-            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent);
+            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent, out _);
 
             // Assert
             using (new AssertionScope())
@@ -61,7 +61,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = pgpEncrypt.Encrypt(testFactory.Content);
-            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent);
+            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent, out _);
 
             // Assert
             using (new AssertionScope())
@@ -92,7 +92,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = pgpEncrypt.Encrypt(testFactory.Content);
-            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent);
+            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent, out _);
 
             // Assert
             using (new AssertionScope())
@@ -123,7 +123,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = pgpEncrypt.Encrypt(testFactory.Content);
-            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent);
+            string decryptedContent = pgpDecrypt.Decrypt(encryptedContent, out _);
 
             PgpInspectResult pgpInspectResult = pgpDecrypt.Inspect(encryptedContent);
 
@@ -227,8 +227,8 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encrypted = pgpEncrypt.Encrypt(testFactory.Content);
-            string decrypted = pgpDecrypt.Decrypt(encrypted);
-            string decrypted2 = pgpDecrypt.Decrypt(encrypted);
+            string decrypted = pgpDecrypt.Decrypt(encrypted, out _);
+            string decrypted2 = pgpDecrypt.Decrypt(encrypted, out _);
 
             // Assert
             using (new AssertionScope())
@@ -264,7 +264,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedAndSigned = pgpEncryptAndSign.EncryptAndSign(testFactory.Content);
-            string decrypted = pgpDecrypt.Decrypt(encryptedAndSigned);
+            string decrypted = pgpDecrypt.Decrypt(encryptedAndSigned, out _);
 
             // Assert
             using (new AssertionScope())
@@ -298,7 +298,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             {
                 using (Stream outputStream = testFactory.DecryptedContentFileInfo.Create())
                 {
-                    Action act = () => pgpDecrypt.Decrypt(testFactory.Content);
+                    Action act = () => pgpDecrypt.Decrypt(testFactory.Content, out _);
                     act.Should().Throw<ArgumentException>().Where(e => e.Message.StartsWith("Failed to detect encrypted content format."));
                 }
             }
@@ -333,7 +333,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             {
                 using (Stream outputStream = testFactory.DecryptedContentFileInfo.Create())
                 {
-                    Action act = () => pgpDecrypt.Decrypt(encrypted);
+                    Action act = () => pgpDecrypt.Decrypt(encrypted, out _);
                     act.Should().Throw<ArgumentException>().Where(e => e.Message == "Secret key for message not found.");
                 }
             }
@@ -362,7 +362,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedAndSigned = pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.Content);
-            string decryptedAndVerified = pgpDecryptAndVerify.DecryptAndVerify(encryptedAndSigned);
+            string decryptedAndVerified = pgpDecryptAndVerify.DecryptAndVerify(encryptedAndSigned, out _);
 
             // Assert
             using (new AssertionScope())
@@ -402,7 +402,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             using (new AssertionScope())
             {
                 encryptedAndSigned.Should().NotBeNullOrEmpty();
-                Action act = () => pgpDecryptAndVerify.DecryptAndVerify(encryptedAndSigned);
+                Action act = () => pgpDecryptAndVerify.DecryptAndVerify(encryptedAndSigned, out _);
                 act.Should().Throw<PgpException>().Where(e => e.Message == "Failed to verify file.");
             }
 

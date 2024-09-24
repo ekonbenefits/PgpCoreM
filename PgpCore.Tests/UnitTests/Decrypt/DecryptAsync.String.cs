@@ -30,7 +30,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptAsync(encryptedContent);
 
             // Assert
             using (new AssertionScope())
@@ -61,7 +61,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptAsync(encryptedContent);
 
             // Assert
             using (new AssertionScope())
@@ -92,7 +92,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptAsync(encryptedContent);
 
             // Assert
             using (new AssertionScope())
@@ -123,7 +123,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedContent = await pgpEncrypt.EncryptAsync(testFactory.Content);
-            string decryptedContent = await pgpDecrypt.DecryptAsync(encryptedContent);
+            var (decryptedContent, _) = await pgpDecrypt.DecryptAsync(encryptedContent);
 
             PgpInspectResult pgpInspectResult = await pgpDecrypt.InspectAsync(encryptedContent);
 
@@ -226,9 +226,9 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
             // Act
-            string encrypted = await pgpEncrypt.EncryptAsync(testFactory.Content);
-            string decrypted = await pgpDecrypt.DecryptAsync(encrypted);
-            string decrypted2 = await pgpDecrypt.DecryptAsync(encrypted);
+            var encrypted = await pgpEncrypt.EncryptAsync(testFactory.Content);
+            var (decrypted, _) = await pgpDecrypt.DecryptAsync(encrypted);
+            var (decrypted2, _)= await pgpDecrypt.DecryptAsync(encrypted);
 
             // Assert
             using (new AssertionScope())
@@ -263,8 +263,8 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
             // Act
-            string encryptedAndSigned = await pgpEncryptAndSign.EncryptAndSignAsync(testFactory.Content);
-            string decrypted = await pgpDecrypt.DecryptAsync(encryptedAndSigned);
+            var encryptedAndSigned = await pgpEncryptAndSign.EncryptAndSignAsync(testFactory.Content);
+            var (decrypted,_) = await pgpDecrypt.DecryptAsync(encryptedAndSigned);
 
             // Assert
             using (new AssertionScope())
@@ -362,7 +362,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             string encryptedAndSigned = await pgpEncryptAndSign.EncryptAndSignAsync(encryptTestFactory.Content);
-            string decryptedAndVerified = await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptedAndSigned);
+            var (decryptedAndVerified, _) = await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptedAndSigned);
 
             // Assert
             using (new AssertionScope())
