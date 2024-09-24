@@ -303,6 +303,12 @@ namespace PgpCoreM
 
                     if (pgpSignature == null)
                     {
+                        if (outputStream != null)
+                        {
+                            outStream.Position = 0;
+                            outStream.CopyTo(outputStream);
+                        }
+
                         return false;
                     }
 
