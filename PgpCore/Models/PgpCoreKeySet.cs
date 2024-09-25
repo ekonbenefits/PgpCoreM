@@ -46,11 +46,12 @@ public class PgpCoreKeySet : IEncryptionKeys
         set;
     }
 
-    public long EncryptionKeyId
+    public long[] EncryptionKeyIds
     {
         get;
         set;
     }
+
 
     public PgpPublicKey FindPublicKey(long keyId)
     {
@@ -61,7 +62,7 @@ public class PgpCoreKeySet : IEncryptionKeys
         return null;
     }
 
-    public (PgpPrivateKey privateKey, PgpSecretKey secretKey)? FindSecretKey(long keyId)
+    public (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretKey(long keyId)
     {
         if (_privateKeys.TryGetValue(keyId, out var priKey) && _secretKeys.TryGetValue(keyId, out var secKey))
         {

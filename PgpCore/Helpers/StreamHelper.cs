@@ -165,6 +165,23 @@ namespace PgpCoreM.Helpers
             }
         }
 
+        public static async Task PipeAllOnPassVerifyAsync(Stream inStr, Stream outStr, PgpOnePassSignature ops, PgpSignature psig)
+        {
+            byte[] bs = new byte[BufferSize];
+            int numRead;
+            while ((numRead = await inStr.ReadAsync(bs, 0, bs.Length)) > 0)
+            {
+                await outStr.WriteAsync(bs, 0, numRead);
+                ops.Update(bs, 0, numRead);
+            }
+
+            var verified = ops.Verify(psig);
+            if (!verified)
+            {
+                throw new PgpException("Signature verification failed");
+            }
+        }
+
         public static async Task<long> PipeAllLimitedAsync(Stream inStr, long limit, Stream outStr)
         {
             byte[] bs = new byte[BufferSize];

@@ -92,7 +92,7 @@ namespace PgpCoreM
             using (CompositeDisposable disposables = new CompositeDisposable())
             {
                 // decrypt
-                PgpPrivateKey privateKey = null;
+                (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? privateKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
                 if (enc != null)
                 {
@@ -104,7 +104,7 @@ namespace PgpCoreM
 
                         if (privateKey != null)
                         {
-                            symmetricKeyAlgorithm = publicKeyEncryptedData.GetSymmetricAlgorithm(privateKey);
+                            symmetricKeyAlgorithm = publicKeyEncryptedData.GetSymmetricAlgorithm(privateKey.NotNull().PrivateKey);
                             pbe = publicKeyEncryptedData;
                             break;
                         }
@@ -113,7 +113,7 @@ namespace PgpCoreM
                     if (privateKey == null)
                         throw new ArgumentException("Secret key for message not found.");
 
-                    Stream clear = pbe.GetDataStream(privateKey).DisposeWith(disposables);
+                    Stream clear = pbe.GetDataStream(privateKey.NotNull().PrivateKey).DisposeWith(disposables);
                     PgpObjectFactory plainFact = new PgpObjectFactory(clear);
 
                     message = plainFact.NextPgpObject();

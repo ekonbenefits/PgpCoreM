@@ -74,8 +74,7 @@ namespace PgpCoreM
 
                 // Verify against public key ID and that of any sub keys
                 var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                verified = Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
-                    out PgpPublicKey _);
+                verified = EncryptionKeys.FindPublicKey(keyIdToVerify) != null;
             }
             else if (pgpObject is PgpEncryptedDataList dataList)
             {
@@ -87,7 +86,7 @@ namespace PgpCoreM
                 var keyIdToVerify = publicKeyEncryptedData.KeyId;
                 // If we encounter an encrypted packet, verify with the encryption keys used instead
                 // TODO does this even make sense? maybe throw exception instead, or try to decrypt first
-                verified = Utilities.FindPublicKeyInKeyRings(keyIdToVerify, EncryptionKeys.PublicKeyRings.Select(keyRing => keyRing.PgpPublicKeyRing), out PgpPublicKey _);
+                verified = EncryptionKeys.FindPublicKey(keyIdToVerify) != null;
             }
             else if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
             {
@@ -97,8 +96,7 @@ namespace PgpCoreM
 
                 // Verify against public key ID and that of any sub keys
                 var keyIdToVerify = pgpOnePassSignature.KeyId;
-                if (Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
-                        out PgpPublicKey validationKey))
+                if (EncryptionKeys.FindPublicKey(keyIdToVerify) is PgpPublicKey validationKey)
                 {
                     pgpOnePassSignature.InitVerify(validationKey);
 
@@ -130,8 +128,7 @@ namespace PgpCoreM
                 Stream pgpLiteralStream = pgpLiteralData.GetInputStream();
 
                 // Verify against public key ID and that of any sub keys
-                if (Utilities.FindPublicKey(pgpSignature.KeyId, EncryptionKeys.VerificationKeys,
-                        out PgpPublicKey publicKey))
+                if (EncryptionKeys.FindPublicKey(pgpSignature.KeyId) is PgpPublicKey publicKey)
                 {
                     foreach (PgpSignature _ in publicKey.GetSignatures())
                     {
@@ -291,7 +288,7 @@ namespace PgpCoreM
                     PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpObjectFactory.NextPgpObject();
                     PgpSignature pgpSignature = pgpSignatureList[0];
 
-                    pgpSignature.InitVerify(EncryptionKeys.VerificationKeys.First());
+                    pgpSignature.InitVerify(EncryptionKeys.FindPublicKey(pgpSignature.KeyId));
 
                     // Read through message again and calculate signature
                     outStream.Position = 0;

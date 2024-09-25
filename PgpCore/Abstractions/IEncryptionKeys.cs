@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using PgpCoreM.Models;
 
-namespace PgpCoreM.Abstractions
+namespace PgpCoreM
 {
     /// <summary>
     /// Encryption Keys
@@ -17,8 +17,27 @@ namespace PgpCoreM.Abstractions
         long SigningKeyId { get;  }
         long[] EncryptionKeyIds { get;  }
 
+    
+
         PgpPublicKey FindPublicKey(long keyId);
 
         (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretKey(long keyId);
+    }
+
+
+    public static class ExtIEncryptionKeys
+    {
+        public static IEnumerable<PgpPublicKey> GetPublicKeys(this IEncryptionKeys keys)
+        {
+         
+            foreach (var keyIds in keys.EncryptionKeyIds)
+            {
+                var publicKey = keys.FindPublicKey(keyIds);
+                if (publicKey != null)
+                {
+                    yield return publicKey;
+                }
+            }
+        }
     }
 }

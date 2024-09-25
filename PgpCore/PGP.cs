@@ -585,7 +585,7 @@ namespace PgpCoreM
 
             PublicKeyAlgorithmTag tag = keyMaterial.NotNull().SecretKey.PublicKey.Algorithm;
 			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);
-			pgpSignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, keyMaterial.NotNull().PrivateKey));
+			pgpSignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, keyMaterial.NotNull().PrivateKey);
 			armoredOutputStream.BeginClearText(HashAlgorithm);
 			foreach (string userId in keyMaterial.NotNull().SecretKey.PublicKey.GetUserIds())
 			{

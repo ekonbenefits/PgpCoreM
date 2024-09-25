@@ -409,7 +409,7 @@ namespace PgpCoreM
 
         public PgpPublicKey FindPublicKey(long keyId) => EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
 
-        (PgpPrivateKey privateKey, PgpSecretKey secretKey)? IEncryptionKeys.FindSecretKey(long keyId)
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretKey(long keyId)
         {
             PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
 
