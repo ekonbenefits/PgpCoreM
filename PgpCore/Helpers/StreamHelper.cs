@@ -171,9 +171,10 @@ namespace PgpCoreM.Helpers
             int numRead;
             while ((numRead = await inStr.ReadAsync(bs, 0, bs.Length)) > 0)
             {
-                await outStr.WriteAsync(bs, 0, numRead);
                 ops.Update(bs, 0, numRead);
+                await outStr.WriteAsync(bs, 0, numRead);
             }
+
 
             var verified = ops.Verify(psig);
             if (!verified)

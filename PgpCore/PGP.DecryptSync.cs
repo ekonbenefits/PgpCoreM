@@ -241,7 +241,7 @@ namespace PgpCoreM
 
             if (privateKey == null)
             {
-                throw new MissingPrimaryKeyException("Secret key for message not found.");
+                throw new PgpException("Secret key for message not found.");
             }
 
             Stream clear = pbe.GetDataStream(privateKey.NotNull().PrivateKey).DisposeWith(disposables);
@@ -275,6 +275,11 @@ namespace PgpCoreM
                 }
             }
 
+            if (verifyKey is null)
+            {
+                throw new PgpException("Missing Verify Key.");
+            }
+
 
             var literalData  = plainFact.NextPgpObject() as PgpLiteralData;
             if (literalData is null)
@@ -290,6 +295,7 @@ namespace PgpCoreM
             originalFileName = literalData.FileName;
             var ops = sList[sigIndex];
             var match = matchList[sigIndex];
+            ops.InitVerify(verifyKey);
             StreamHelper.PipeAllOnPassVerify(unc, outputStream, ops, match);
 
         }

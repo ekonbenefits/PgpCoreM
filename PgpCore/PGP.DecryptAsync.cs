@@ -285,6 +285,7 @@ namespace PgpCoreM
             var originalFileName = literalData.FileName;
             var ops = sList[sigIndex];
             var match = matchList[sigIndex];
+            ops.InitVerify(verifyKey);
             await StreamHelper.PipeAllOnPassVerifyAsync(unc, outputStream, ops, match);
             return originalFileName;
         }
