@@ -414,7 +414,10 @@ namespace PgpCoreM
                 return SecretKey.PublicKey;
             }
 
-            return EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
+			var result = EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
+            result ??= VerificationKeys.FirstOrDefault(it => it.KeyId == keyId);
+
+            return result;
 
         }
 
