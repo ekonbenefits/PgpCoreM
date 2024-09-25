@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace PgpCoreM.Helpers
 {
@@ -58,6 +59,25 @@ namespace PgpCoreM.Helpers
                 outStr.Write(bs, 0, numRead);
             }
         }
+
+        public static void PipeAllOnPassVerify(Stream inStr, Stream outStr, PgpOnePassSignature ops, PgpSignature psig)
+        {
+            byte[] bs = new byte[BufferSize];
+            int numRead;
+            while ((numRead = inStr.Read(bs, 0, bs.Length)) > 0)
+            {
+                outStr.Write(bs, 0, numRead);
+                ops.Update(bs, 0, numRead);
+            }
+
+            var verified = ops.Verify(psig);
+            if (!verified)
+            {
+                throw new PgpException("Signature verification failed");
+            }
+        }
+
+
 
         /// <summary>
         /// Pipe all bytes from <c>inStr</c> to <c>outStr</c>, throwing <c>StreamFlowException</c> if greater
