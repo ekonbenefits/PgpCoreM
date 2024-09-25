@@ -14,17 +14,17 @@ namespace PgpCoreM
 	{
 		#region Instance Members (Public)
 
-		public IEnumerable<PgpPublicKeyRingWithPreferredKey> PublicKeyRings => _publicKeyRingsWithPreferredKey.Value;
-		public IEnumerable<PgpPublicKey> EncryptKeys => _encryptKeys.Value;
-		public IEnumerable<PgpPublicKey> VerificationKeys => _verificationKeys.Value;
-		public PgpPrivateKey SigningPrivateKey => _signingPrivateKey.Value;
-		public PgpSecretKey SigningSecretKey => _signingSecretKey.Value;
+		public IEnumerable<PgpPublicKeyRingWithPreferredKey> PublicKeyRings => _publicKeyRingsWithPreferredKey?.Value;
+		public IEnumerable<PgpPublicKey> EncryptKeys => _encryptKeys?.Value;
+		public IEnumerable<PgpPublicKey> VerificationKeys => _verificationKeys?.Value;
+		public PgpPrivateKey SigningPrivateKey => _signingPrivateKey?.Value;
+		public PgpSecretKey SigningSecretKey => _signingSecretKey?.Value;
 		public IEnumerable<PgpPublicKey> PublicKeys => EncryptKeys;
-		public PgpPublicKey MasterKey => _masterKey.Value;
+		public PgpPublicKey MasterKey => _masterKey?.Value;
 		public PgpPublicKey PublicKey => EncryptKeys.FirstOrDefault();
 		public PgpPrivateKey PrivateKey => SigningPrivateKey;
 		public PgpSecretKey SecretKey => SigningSecretKey;
-		public PgpSecretKeyRingBundle SecretKeys => _secretKeys.Value;
+		public PgpSecretKeyRingBundle SecretKeys => _secretKeys?.Value;
 
 
 
@@ -409,7 +409,7 @@ namespace PgpCoreM
 
         public PgpPublicKey FindPublicKey(long keyId)
         {
-            if (SecretKey.PublicKey.KeyId == keyId)
+            if (SecretKey?.PublicKey.KeyId == keyId)
             {
                 return SecretKey.PublicKey;
             }
