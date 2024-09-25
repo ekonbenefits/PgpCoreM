@@ -270,6 +270,11 @@ namespace PgpCoreM
                 }
             }
 
+            if (verifyKey is null)
+            {
+                throw new PgpException("Failed to verify file.");
+            }
+
 
             var literalData = plainFact.NextPgpObject() as PgpLiteralData;
             if (literalData is null)

@@ -277,7 +277,7 @@ namespace PgpCoreM
 
             if (verifyKey is null)
             {
-                throw new PgpException("Missing Verify Key.");
+                throw new PgpException("Failed to verify file.");
             }
 
 

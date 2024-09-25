@@ -287,8 +287,13 @@ namespace PgpCoreM
                     PgpObjectFactory pgpObjectFactory = new PgpObjectFactory(armoredInputStream);
                     PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpObjectFactory.NextPgpObject();
                     PgpSignature pgpSignature = pgpSignatureList[0];
+                    var key = EncryptionKeys.FindPublicKey(pgpSignature.KeyId);
+                    if (key == null)
+                    {
+                        throw new PgpException("Signature verification failed. Public key not found.");
+                    }
 
-                    pgpSignature.InitVerify(EncryptionKeys.FindPublicKey(pgpSignature.KeyId));
+                    pgpSignature.InitVerify(key);
 
                     // Read through message again and calculate signature
                     outStream.Position = 0;
