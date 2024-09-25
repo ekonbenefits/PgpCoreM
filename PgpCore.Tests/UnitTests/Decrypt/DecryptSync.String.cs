@@ -386,12 +386,15 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             // Arrange
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
+            TestFactory signTestFactory2 = new TestFactory();
 
-            encryptTestFactory.Arrange(keyType, FileType.Known);
-            signTestFactory.Arrange(KeyType.Generated, FileType.Known);
 
-            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
-            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
+            encryptTestFactory.Arrange(KeyType.Generated, FileType.Known);
+            signTestFactory.Arrange(keyType, FileType.Known);
+            signTestFactory2.Arrange(KeyType.Generated, FileType.Known);
+
+            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKey, signTestFactory.PrivateKey, signTestFactory.Password);
+            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory2.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
