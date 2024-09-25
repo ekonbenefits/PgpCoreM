@@ -531,12 +531,15 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             // Arrange
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
+            TestFactory signTestFactory2 = new TestFactory();
 
             encryptTestFactory.Arrange(keyType, FileType.Known);
             signTestFactory.Arrange(KeyType.Generated, FileType.Known);
+            signTestFactory2.Arrange(KeyType.Generated, FileType.Known);
 
             EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, signTestFactory.PrivateKeyFileInfo, signTestFactory.Password);
-            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
+
+            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory2.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
