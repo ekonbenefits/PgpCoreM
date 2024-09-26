@@ -1436,7 +1436,7 @@ namespace PgpCoreM.Tests
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
                 pgp.EncryptStream(inputFileStream, outputFileStream);
 
-            var pgpPublicKeys = Utilities.ReadPublicKey(testFactory.PublicKeyStream);
+            var pgpPublicKeys = Utilities.ReadPublicKey(testFactory.PublicKeyStream).ToList();
             IEnumerable<long> recipients = pgp.GetStreamRecipients(testFactory.EncryptedContentStream);
 
             // Assert
@@ -2379,7 +2379,7 @@ namespace PgpCoreM.Tests
 
             // Act
             string encryptedContent = pgp.EncryptArmoredString(testFactory.Content);
-            var pgpPublicKeys = Utilities.ReadPublicKey(testFactory.PublicKey);
+            var pgpPublicKeys = Utilities.ReadPublicKey(testFactory.PublicKey).ToList();
             IEnumerable<long> recipients = pgp.GetArmoredStringRecipients(encryptedContent);
 
             // Assert
