@@ -12,6 +12,7 @@ public class PgpCoreKeySet : IKeySet
     private Dictionary<long, PgpPrivateKey> _privateKeys = new();
     private Dictionary<long, PgpSecretKey> _secretKeys = new();
     private Dictionary<long, PgpPublicKey> _publicKeys = new();
+    private HashSet<long> _encryptKeyIds = new();
 
     public int AddSecretKeys(Stream privateKeyRing, string password)
     {
@@ -20,8 +21,20 @@ public class PgpCoreKeySet : IKeySet
         foreach(var secretKey in bundle.GetKeyRings().SelectMany(it=>it.GetSecretKeys()))
         {
             _secretKeys.Add(secretKey.PublicKey.KeyId, secretKey);
+
+            if (secretKey.IsMasterKey && SignKeyId == 0  && secretKey.PublicKey.IsSigningKey())
+            {
+                SignKeyId = secretKey.KeyId;
+            }
+
             _privateKeys.Add(secretKey.PublicKey.KeyId, secretKey.ExtractPrivateKey(password?.ToCharArray()));
             _publicKeys.Add(secretKey.PublicKey.KeyId, secretKey.PublicKey);
+
+            if (secretKey.PublicKey.IsEncryptionKey)
+            {
+                _encryptKeyIds.Add(secretKey.PublicKey.KeyId);
+            }
+
             count++;
         }
 
@@ -35,6 +48,13 @@ public class PgpCoreKeySet : IKeySet
         foreach (var publicKey in bundle.SelectMany(it => it.GetPublicKeys()))
         {
             _publicKeys.Add(publicKey.KeyId, publicKey);
+
+            if (publicKey.IsEncryptionKey)
+            {
+                _encryptKeyIds.Add(publicKey.KeyId);
+            }
+
+
             count++;
         }
         return count;
