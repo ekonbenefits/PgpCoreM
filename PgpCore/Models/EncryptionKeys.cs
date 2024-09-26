@@ -419,7 +419,7 @@ namespace PgpCoreM
         public PgpPublicKey FindPublicVerifyKey(long keyId)
         {
 
-            var result = EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
+            var result = VerificationKeys.FirstOrDefault(it => it.KeyId == keyId);
 
             return result;
 
