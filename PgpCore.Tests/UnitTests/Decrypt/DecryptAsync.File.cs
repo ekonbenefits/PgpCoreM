@@ -558,12 +558,13 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             // Arrange
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
-
+            TestFactory signTestFactory2 = new TestFactory();
             await encryptTestFactory.ArrangeAsync(keyType, FileType.Known);
             await signTestFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
+            await signTestFactory2.ArrangeAsync(KeyType.Generated, FileType.Known);
 
-            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
-            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
+            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, signTestFactory.PrivateKeyFileInfo, signTestFactory.Password);
+            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory2.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 

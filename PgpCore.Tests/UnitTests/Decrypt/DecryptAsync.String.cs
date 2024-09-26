@@ -352,9 +352,10 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
 
+
             await encryptTestFactory.ArrangeAsync(keyType, FileType.Known);
             await signTestFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
-
+           
             EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKey, signTestFactory.PrivateKey, signTestFactory.Password);
             EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
@@ -386,12 +387,14 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             // Arrange
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
+            var signTestFactory2 = new TestFactory();
 
             await encryptTestFactory.ArrangeAsync(keyType, FileType.Known);
             await signTestFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
+            await signTestFactory2.ArrangeAsync(KeyType.Generated, FileType.Known);
 
-            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
-            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
+            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKey, signTestFactory.PrivateKey, signTestFactory.Password);
+            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory2.PublicKey, encryptTestFactory.PrivateKey, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 

@@ -95,9 +95,8 @@ namespace PgpCoreM
 
             PgpEncryptedDataGenerator pk =
                 new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
-            foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in EncryptionKeys.PublicKeyRings)
+            foreach (var publicKey in EncryptionKeys.GetPublicEncryptKeys())
             {
-                PgpPublicKey publicKey = publicKeyRing.PreferredEncryptionKey ?? publicKeyRing.DefaultEncryptionKey;
                 pk.AddMethod(publicKey);
             }
 

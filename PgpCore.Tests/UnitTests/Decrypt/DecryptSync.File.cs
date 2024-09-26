@@ -405,7 +405,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
             pgpDecrypt.Decrypt(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo, out var originalFileName);
 
             // Assert
@@ -536,12 +536,13 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             signTestFactory.Arrange(KeyType.Generated, FileType.Known);
 
             EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, signTestFactory.PrivateKeyFileInfo, signTestFactory.Password);
+
             EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
             pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out var originalFileName);
 
             // Assert
@@ -568,17 +569,20 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             // Arrange
             TestFactory encryptTestFactory = new TestFactory();
             TestFactory signTestFactory = new TestFactory();
+            var signTestFactory2 = new TestFactory();
 
             encryptTestFactory.Arrange(keyType, FileType.Known);
             signTestFactory.Arrange(KeyType.Generated, FileType.Known);
+            signTestFactory2.Arrange(KeyType.Generated, FileType.Known);
 
-            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
-            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
+
+            EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyFileInfo, signTestFactory.PrivateKeyFileInfo, signTestFactory.Password);
+            EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory2.PublicKeyFileInfo, encryptTestFactory.PrivateKeyFileInfo, encryptTestFactory.Password);
             PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
             var ex = Assert.Throws<PgpException>(() => pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out _));
 
             // Assert

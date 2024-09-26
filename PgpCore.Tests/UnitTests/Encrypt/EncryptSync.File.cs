@@ -268,7 +268,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo);
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo);
 
             // Assert
             using (new AssertionScope())
@@ -307,7 +307,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, armor: false);
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, armor: false);
 
             // Assert
             using (new AssertionScope())
@@ -344,7 +344,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, withIntegrityCheck: false);
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, withIntegrityCheck: false);
 
             // Assert
             using (new AssertionScope())
@@ -383,7 +383,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, name: TESTNAME);
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, name: TESTNAME);
 
             // Assert
             using (new AssertionScope())
@@ -422,7 +422,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
 
             // Assert
             using (new AssertionScope())
@@ -463,7 +463,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, oldFormat: true);
+            pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo, oldFormat: true);
 
             // Assert
             using (new AssertionScope())

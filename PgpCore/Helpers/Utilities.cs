@@ -23,6 +23,27 @@ namespace PgpCoreM
     /// <remarks>Basic utility class.</remarks>
     public static class Utilities
 	{
+
+        /// <summary>
+        /// Returns value that should not be null when used.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item">The item.</param>
+        /// <param name="exceptionMessage">optional exception message</param>
+        /// <returns></returns>
+        public static T NotNull<T>(this T? item, string exceptionMessage = null) where T : struct
+        {
+            if (item.HasValue) return item.Value;
+            throw new ArgumentNullException(nameof(item), exceptionMessage ?? "This item Cannot Be Null");
+        }
+
+        public static T NotNull<T>(this T item, string exceptionMessage = null) where T : class
+        {
+            if (item != null) return item;
+            throw new ArgumentNullException(nameof(item), exceptionMessage ?? "This item Cannot Be Null");
+        }
+
+
         public static int AsymmetricStrength(AsymmetricAlgorithm asymmetricAlgorithm, int symmetricStrength) 
             => AsymmetricKeyGeneratorParams(asymmetricAlgorithm, symmetricStrength).signParams.Strength;
 
@@ -468,7 +489,7 @@ namespace PgpCoreM
 		/// </summary>
 		/// <param name="publicKeyStream">Input stream containing the public key contents</param>
 		/// <returns></returns>
-		public static PgpPublicKey ReadPublicKey(Stream publicKeyStream)
+		public static IEnumerable<PgpPublicKey> ReadPublicKey(Stream publicKeyStream)
 		{
 			using (Stream inputStream = PgpUtilities.GetDecoderStream(publicKeyStream))
 			{
@@ -483,23 +504,14 @@ namespace PgpCoreM
 						.Cast<PgpPublicKey>()
 						.Where(k => k.IsEncryptionKey).ToList();
 
-					const int encryptKeyFlags = PgpKeyFlags.CanEncryptCommunications | PgpKeyFlags.CanEncryptStorage;
 
 					foreach (PgpPublicKey key in keys.Where(k => k.Version >= 4))
 					{
-						foreach (PgpSignature s in key.GetSignatures())
-						{
-							if (s.HasSubpackets && s.GetHashedSubPackets().GetKeyFlags() == encryptKeyFlags)
-								return key;
-						}
-					}
-
-					if (keys.Any())
-						return keys.First();
+                        yield return key;
+                    }
 				}
 			}
 
-			throw new ArgumentException("Can't find encryption key in key ring.");
 		}
 
 		/// <summary>
@@ -507,7 +519,7 @@ namespace PgpCoreM
 		/// </summary>
 		/// <param name="publicKey">The plain text value of the public key</param>
 		/// <returns></returns>
-		public static PgpPublicKey ReadPublicKey(string publicKey)
+		public static IEnumerable<PgpPublicKey>ReadPublicKey(string publicKey)
 		{
 			if (string.IsNullOrEmpty(publicKey))
 				throw new FileNotFoundException("Public key was not provided");
@@ -520,7 +532,7 @@ namespace PgpCoreM
 		/// </summary>
 		/// <param name="publicKeyFile">The path to the public key file</param>
 		/// <returns></returns>
-		public static PgpPublicKey ReadPublicKey(FileInfo publicKeyFile)
+		public static IEnumerable<PgpPublicKey> ReadPublicKey(FileInfo publicKeyFile)
 		{
 			if (!publicKeyFile.Exists)
 				throw new FileNotFoundException($"File {publicKeyFile} was not found");
@@ -965,6 +977,11 @@ namespace PgpCoreM
 				score += 2;
 			return score;
 		}
+
+        public static bool IsSigningKey(this PgpPublicKey key)
+        {
+            return key.GetSignatures().Any(it => it.HasSubpackets && it.GetHashedSubPackets().GetKeyFlags() > 0);
+        }
 
 		/// <summary>
 		/// Scores the secret key for how suitable it is as a signing key

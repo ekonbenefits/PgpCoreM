@@ -10,21 +10,24 @@ using PgpCoreM.Models;
 
 namespace PgpCoreM
 {
-    public class EncryptionKeys : IEncryptionKeys
+    public class EncryptionKeys : IKeySet
 	{
 		#region Instance Members (Public)
 
-		public IEnumerable<PgpPublicKeyRingWithPreferredKey> PublicKeyRings => _publicKeyRingsWithPreferredKey.Value;
-		public IEnumerable<PgpPublicKey> EncryptKeys => _encryptKeys.Value;
-		public IEnumerable<PgpPublicKey> VerificationKeys => _verificationKeys.Value;
-		public PgpPrivateKey SigningPrivateKey => _signingPrivateKey.Value;
-		public PgpSecretKey SigningSecretKey => _signingSecretKey.Value;
+		public IEnumerable<PgpPublicKeyRingWithPreferredKey> PublicKeyRings => _publicKeyRingsWithPreferredKey?.Value;
+		public IEnumerable<PgpPublicKey> EncryptKeys => _encryptKeys?.Value;
+		public IEnumerable<PgpPublicKey> VerificationKeys => _verificationKeys?.Value;
+		public PgpPrivateKey SigningPrivateKey => _signingPrivateKey?.Value;
+		public PgpSecretKey SigningSecretKey => _signingSecretKey?.Value;
 		public IEnumerable<PgpPublicKey> PublicKeys => EncryptKeys;
-		public PgpPublicKey MasterKey => _masterKey.Value;
+		public PgpPublicKey MasterKey => _masterKey?.Value;
 		public PgpPublicKey PublicKey => EncryptKeys.FirstOrDefault();
 		public PgpPrivateKey PrivateKey => SigningPrivateKey;
 		public PgpSecretKey SecretKey => SigningSecretKey;
-		public PgpSecretKeyRingBundle SecretKeys => _secretKeys.Value;
+		public PgpSecretKeyRingBundle SecretKeys => _secretKeys?.Value;
+
+
+
 
 		#endregion Instance Members (Public)
 
@@ -400,25 +403,54 @@ namespace PgpCoreM
 
 		#region Public Methods
 
-		public PgpPrivateKey FindSecretKey(long keyId)
-		{
-			if (SecretKeys == null)
-				throw new ArgumentNullException("No private keys found. These should be provided in EncryptionKeys constructor.");
+        public long SignKeyId => SigningPrivateKey.KeyId;
 
-			PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
+        public long[] EncryptKeyIds => _encryptKeys.Value.Select(it=>it.KeyId).ToArray();
 
-			if (pgpSecKey == null)
-				return null;
+        public PgpPublicKey FindPublicEncryptKey(long keyId)
+        {
+      
+			var result = EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
 
-			return pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray());
-		}
+            return result;
 
-		/// <summary>
-		/// This method will try to find the key with the given keyId in a key ring and set it as the preferred key.
-		/// If it cannot find the key, it will not change the preferred key.
-		/// </summary>
-		/// <param name="keyId">The keyId to find.</param>
-		public void UseEncryptionKey(long keyId)
+        }
+
+        public PgpPublicKey FindPublicVerifyKey(long keyId)
+        {
+
+            var result = VerificationKeys.FirstOrDefault(it => it.KeyId == keyId);
+
+            return result;
+
+        }
+
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IKeySet.FindSecretDecryptKey(long keyId)
+        {
+            PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
+
+			if (pgpSecKey == null || !pgpSecKey.PublicKey.IsEncryptionKey)
+                return null;
+
+			return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
+        }
+
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IKeySet.FindSecretSignKey(long keyId)
+        {
+            PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
+
+            if (pgpSecKey == null || !pgpSecKey.PublicKey.IsSigningKey())
+                return null;
+
+            return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
+        }
+
+        /// <summary>
+        /// This method will try to find the key with the given keyId in a key ring and set it as the preferred key.
+        /// If it cannot find the key, it will not change the preferred key.
+        /// </summary>
+        /// <param name="keyId">The keyId to find.</param>
+        public void UseEncryptionKey(long keyId)
 		{
 			foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in PublicKeyRings)
 			{
