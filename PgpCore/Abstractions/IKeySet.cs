@@ -27,7 +27,7 @@ namespace PgpCoreM
     }
 
 
-    public static class ExtIEncryptionKeys
+    public static class KeySetExtensions
     {
         public static IEnumerable<PgpPublicKey> GetPublicEncryptKeys(this IKeySet keys)
         {
