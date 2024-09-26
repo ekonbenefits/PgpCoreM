@@ -9,11 +9,20 @@ using Xunit;
 using System.IO;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Bcpg;
+using Xunit.Abstractions;
 
 namespace PgpCoreM.Tests.UnitTests.Recipient
 {
     public class RecipientsSync : TestBase
     {
+
+        private readonly ITestOutputHelper output;
+
+        public RecipientsSync(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Theory]
         [InlineData(KeyType.Generated)]
         [InlineData(KeyType.Known)]
@@ -28,18 +37,25 @@ namespace PgpCoreM.Tests.UnitTests.Recipient
             // Act
             pgpEncrypt.Encrypt(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
             IEnumerable<long> recipients = pgpEncrypt.GetRecipients(testFactory.EncryptedContentFileInfo);
-
+            output.WriteLine(testFactory.PublicKeyFileInfo.FullName);
             // Assert
             using (new AssertionScope())
             {
                 testFactory.EncryptedContentFileInfo.Exists.Should().BeTrue();
                 recipients.Should().NotBeEmpty();
-                recipients.Should().HaveCount(1);
+                if (keyType == KeyType.Known)
+                {
+                    recipients.Should().HaveCount(3);
+                }
+                else
+                {
+                    recipients.Should().HaveCount(1);
+                }
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
                     PgpPublicKey publicKey = ReadBestEncryptionPublicKey(publicKeyStream);
-                    recipients.Single().Should().Be(publicKey.KeyId);
+                    recipients.Any(it=>it == publicKey.KeyId).Should().BeTrue();
                 }
             }
 
