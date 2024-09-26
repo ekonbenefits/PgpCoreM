@@ -11,7 +11,7 @@ namespace PgpCoreM
     /// You can supply any or all of these, however, if PrivateKeys 
     /// are required Secret keys should also be supplied
     /// </summary>
-    public interface IEncryptionKeys
+    public interface IKeySet
     {
      
         long SignKeyId { get;  }
@@ -29,7 +29,7 @@ namespace PgpCoreM
 
     public static class ExtIEncryptionKeys
     {
-        public static IEnumerable<PgpPublicKey> GetPublicEncryptKeys(this IEncryptionKeys keys)
+        public static IEnumerable<PgpPublicKey> GetPublicEncryptKeys(this IKeySet keys)
         {
          
             foreach (var keyIds in keys.EncryptKeyIds)

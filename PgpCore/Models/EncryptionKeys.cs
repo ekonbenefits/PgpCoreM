@@ -10,7 +10,7 @@ using PgpCoreM.Models;
 
 namespace PgpCoreM
 {
-    public class EncryptionKeys : IEncryptionKeys
+    public class EncryptionKeys : IKeySet
 	{
 		#region Instance Members (Public)
 
@@ -425,7 +425,7 @@ namespace PgpCoreM
 
         }
 
-        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretDecryptKey(long keyId)
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IKeySet.FindSecretDecryptKey(long keyId)
         {
             PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
 
@@ -435,7 +435,7 @@ namespace PgpCoreM
 			return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
         }
 
-        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretSignKey(long keyId)
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IKeySet.FindSecretSignKey(long keyId)
         {
             PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
 

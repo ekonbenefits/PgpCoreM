@@ -6,7 +6,7 @@ using PgpCoreM.Abstractions;
 
 namespace PgpCoreM;
 
-public class PgpCoreKeySet : IEncryptionKeys
+public class PgpCoreKeySet : IKeySet
 {
     //Decrypted Secret keys
     private Dictionary<long, PgpPrivateKey> _privateKeys = new();

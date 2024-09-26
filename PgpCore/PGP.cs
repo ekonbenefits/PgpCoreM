@@ -151,7 +151,7 @@ namespace PgpCoreM
 
 		public HashAlgorithmTag HashAlgorithm { get; set; } = HashAlgorithmTag.Sha256;
 
-		public IEncryptionKeys EncryptionKeys { get; private set; }
+		public IKeySet EncryptionKeys { get; private set; }
 
         public int SecurityStrengthInBits { get; set; } = 128;
 
@@ -179,7 +179,7 @@ namespace PgpCoreM
 
         }
 
-        public PGP(IEncryptionKeys encryptionKeys)
+        public PGP(IKeySet encryptionKeys)
 		{
 			EncryptionKeys = encryptionKeys;
 		}
