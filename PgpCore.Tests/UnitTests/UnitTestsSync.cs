@@ -2097,10 +2097,12 @@ namespace PgpCoreM.Tests
             // Arrange
             TestFactory testFactory = new TestFactory();
             TestFactory testFactory2 = new TestFactory();
+            TestFactory testFactory3 = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             testFactory2.Arrange(KeyType.Generated, FileType.Known);
-            EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKey, testFactory.PrivateKey, testFactory.Password);
-            EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory2.PublicKey, testFactory.PrivateKey, testFactory.Password);
+            testFactory3.Arrange(KeyType.Generated, FileType.Known);
+            EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory2.PublicKey, testFactory.PrivateKey, testFactory.Password);
+            EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory3.PublicKey, testFactory.PrivateKey, testFactory.Password);
 
             PGP pgpEncrypt = new PGP(encryptionKeys);
             PGP pgpDecrypt = new PGP(decryptionKeys);
@@ -2111,7 +2113,7 @@ namespace PgpCoreM.Tests
             var ex = Assert.Throws<PgpException>( () => decryptedContent = pgpDecrypt.DecryptArmoredStringAndVerify(encryptedContent, out _));
 
             // Assert
-            Assert.Equal("Failed to verify file.", ex.Message);
+            Assert.Equal("Secret key for message not found.", ex.Message);
             Assert.NotNull(encryptedContent);
             Assert.Null(decryptedContent);
 
@@ -2464,6 +2466,7 @@ namespace PgpCoreM.Tests
 
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKey, testFactory.PrivateKey, testFactory.Password);
             PGP pgp = new PGP(encryptionKeys);
+            pgp.CompressionAlgorithm = CompressionAlgorithmTag.Uncompressed;
 
             using (Stream inputFileStream = testFactory.ContentStream)
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -2653,6 +2656,7 @@ namespace PgpCoreM.Tests
 
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKey, testFactory.PrivateKey, testFactory.Password);
             PGP pgp = new PGP(encryptionKeys);
+            pgp.CompressionAlgorithm = CompressionAlgorithmTag.Uncompressed;
 
             using (Stream inputFileStream = testFactory.ContentStream)
             using (Stream outputFileStream = testFactory.SignedContentFileInfo.Create())
