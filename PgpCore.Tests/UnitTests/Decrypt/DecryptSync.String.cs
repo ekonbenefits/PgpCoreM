@@ -263,7 +263,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
             // Act
-            string encryptedAndSigned = pgpEncryptAndSign.EncryptAndSign(testFactory.Content);
+            string encryptedAndSigned = pgpEncryptAndSign.EncryptAfterSign(testFactory.Content);
             string decrypted = pgpDecrypt.Decrypt(encryptedAndSigned, out _);
 
             // Assert
@@ -361,7 +361,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            string encryptedAndSigned = pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.Content);
+            string encryptedAndSigned = pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.Content);
             string decryptedAndVerified = pgpDecryptAndVerify.DecryptAndVerify(encryptedAndSigned, out _);
 
             // Assert
@@ -399,7 +399,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            string encryptedAndSigned = pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.Content);
+            string encryptedAndSigned = pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.Content);
 
             // Assert
             using (new AssertionScope())
