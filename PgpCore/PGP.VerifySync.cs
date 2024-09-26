@@ -266,19 +266,13 @@ namespace PgpCoreM
                     PgpPublicKey verifyKey = null;
                     for (int i = 0; i < pgpSignatureList.Count; i++)
                     {
-                        foreach (var key in EncryptionKeys.GetPublicEncryptKeys())
+                        verifyKey = EncryptionKeys.FindPublicVerifyKey(pgpSignatureList[i].KeyId);
+                        
+                        if (verifyKey != null)
                         {
-                            if (pgpSignatureList[i].KeyId == key.KeyId)
-                            {
-                                pgpSignature = pgpSignatureList[i];
-                                verifyKey = key;
-                                break;
-                            }
-                        }
-                        if (pgpSignature != null)
+                            pgpSignature = pgpSignatureList[i];
                             break;
-
-                       
+                        }
                     }
 
                     if (pgpSignature == null)

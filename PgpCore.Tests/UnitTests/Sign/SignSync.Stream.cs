@@ -8,11 +8,20 @@ using System.Threading.Tasks;
 using Xunit;
 using System.IO;
 using PgpCoreM.Models;
+using Xunit.Abstractions;
 
 namespace PgpCoreM.Tests.UnitTests.Sign
 {
     public class SignSync_Stream : TestBase
     {
+
+        private readonly ITestOutputHelper output;
+
+        public SignSync_Stream(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Theory]
         [InlineData(KeyType.Generated)]
         [InlineData(KeyType.Known)]
@@ -114,6 +123,7 @@ namespace PgpCoreM.Tests.UnitTests.Sign
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
                 pgpSign.Sign(testFactory.ContentStream, outputFileStream, name: TESTNAME);
+
 
             bool verified = pgpVerify.Verify(testFactory.EncryptedContentStream);
 
@@ -245,6 +255,9 @@ namespace PgpCoreM.Tests.UnitTests.Sign
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
                 pgpSign.ClearSign(testFactory.ContentStream, outputFileStream);
+
+
+            output.WriteLine(testFactory.EncryptedContentFileInfo.FullName);
 
             bool verified = pgpVerify.VerifyClear(testFactory.EncryptedContentStream);
 
