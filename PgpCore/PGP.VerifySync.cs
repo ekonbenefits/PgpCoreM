@@ -65,27 +65,14 @@ namespace PgpCoreM
             Stream encodedFile = PgpUtilities.GetDecoderStream(inputStream);
             PgpObjectFactory factory = new PgpObjectFactory(encodedFile);
             PgpObject pgpObject = factory.NextPgpObject();
-            if (pgpObject is PgpCompressedData)
+            if (pgpObject is PgpCompressedData cData)
             {
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKeyEncryptedData(encodedFile);
+                Stream compDataIn = cData.GetDataStream();
+                factory = new PgpObjectFactory(compDataIn);
+                pgpObject = factory.NextPgpObject();
+            }
 
-                // Verify against public key ID and that of any sub keys
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                verified = EncryptionKeys.FindPublicKey(keyIdToVerify) != null;
-            }
-            else if (pgpObject is PgpEncryptedDataList dataList)
-            {
-                if (throwIfEncrypted)
-                {
-                    throw new ArgumentException("Input is encrypted. Decrypt the input first.");
-                }
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKey(dataList);
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                // If we encounter an encrypted packet, verify with the encryption keys used instead
-                // TODO does this even make sense? maybe throw exception instead, or try to decrypt first
-                verified = EncryptionKeys.FindPublicKey(keyIdToVerify) != null;
-            }
-            else if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
+            if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
             {
                 PgpOnePassSignature pgpOnePassSignature = onePassSignatureList[0];
                 PgpLiteralData pgpLiteralData = (PgpLiteralData)factory.NextPgpObject();
