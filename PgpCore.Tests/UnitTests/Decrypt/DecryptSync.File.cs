@@ -405,7 +405,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecrypt = new PGP(decryptionKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
             pgpDecrypt.Decrypt(testFactory.EncryptedContentFileInfo, testFactory.DecryptedContentFileInfo, out var originalFileName);
 
             // Assert
@@ -542,7 +542,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
             pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out var originalFileName);
 
             // Assert
@@ -582,7 +582,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
 
             // Act
-            pgpEncryptAndSign.EncryptAndSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
+            pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
             var ex = Assert.Throws<PgpException>(() => pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out _));
 
             // Assert

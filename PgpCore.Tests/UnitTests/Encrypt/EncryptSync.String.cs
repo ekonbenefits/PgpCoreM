@@ -238,7 +238,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            string encryptedContent = pgpEncrypt.EncryptAndSign(testFactoryEncrypt.Content);
+            string encryptedContent = pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.Content);
 
             // Assert
             using (new AssertionScope())
@@ -277,7 +277,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            string encryptedContent = pgpEncrypt.EncryptAndSign(testFactoryEncrypt.Content, withIntegrityCheck: false);
+            string encryptedContent = pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.Content, withIntegrityCheck: false);
 
             // Assert
             using (new AssertionScope())
@@ -316,7 +316,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            string encryptedContent = pgpEncrypt.EncryptAndSign(testFactoryEncrypt.Content, name: TESTNAME);
+            string encryptedContent = pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.Content, name: TESTNAME);
 
             // Assert
             using (new AssertionScope())
@@ -355,7 +355,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            string encryptedContent = pgpEncrypt.EncryptAndSign(testFactoryEncrypt.Content, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
+            string encryptedContent = pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.Content, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
 
             // Assert
             using (new AssertionScope())
@@ -396,7 +396,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             PGP pgpInspect = new PGP(inspectionKeys);
 
             // Act
-            string encryptedContent = pgpEncrypt.EncryptAndSign(testFactoryEncrypt.Content, oldFormat: true);
+            string encryptedContent = pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.Content, oldFormat: true);
 
             // Assert
             using (new AssertionScope())
