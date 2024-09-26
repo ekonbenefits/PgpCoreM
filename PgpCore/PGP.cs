@@ -495,9 +495,9 @@ namespace PgpCoreM
 			var encryptedDataGenerator =
 				new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
             bool encryptionRun = false;
-			foreach (var key in EncryptionKeys.EncryptionKeyIds)
+			foreach (var key in EncryptionKeys.EncryptKeyIds)
 			{
-				PgpPublicKey publicKey = EncryptionKeys.FindPublicKey(key);
+				PgpPublicKey publicKey = EncryptionKeys.FindPublicEncryptKey(key);
                 if (publicKey == null)
                 {
                     continue;
@@ -555,7 +555,7 @@ namespace PgpCoreM
 
         private PgpSignatureGenerator InitSignatureGenerator(Stream compressedOut)
         {
-			var keyMaterial = EncryptionKeys.FindSecretKey(EncryptionKeys.SigningKeyId);
+			var keyMaterial = EncryptionKeys.FindSecretSignKey(EncryptionKeys.SignKeyId);
 
             PublicKeyAlgorithmTag tag = keyMaterial.NotNull().SecretKey.PublicKey.Algorithm;
 
@@ -581,7 +581,7 @@ namespace PgpCoreM
 
 		private PgpSignatureGenerator InitClearSignatureGenerator(ArmoredOutputStream armoredOutputStream)
 		{
-            var keyMaterial = EncryptionKeys.FindSecretKey(EncryptionKeys.SigningKeyId);
+            var keyMaterial = EncryptionKeys.FindSecretSignKey(EncryptionKeys.SignKeyId);
 
             PublicKeyAlgorithmTag tag = keyMaterial.NotNull().SecretKey.PublicKey.Algorithm;
 			PgpSignatureGenerator pgpSignatureGenerator = new PgpSignatureGenerator(tag, HashAlgorithm);

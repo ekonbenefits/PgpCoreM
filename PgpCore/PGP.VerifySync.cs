@@ -80,7 +80,7 @@ namespace PgpCoreM
 
                 // Verify against public key ID and that of any sub keys
                 var keyIdToVerify = pgpOnePassSignature.KeyId;
-                if (EncryptionKeys.FindPublicKey(keyIdToVerify) is PgpPublicKey validationKey)
+                if (EncryptionKeys.FindPublicVerifyKey(keyIdToVerify) is PgpPublicKey validationKey)
                 {
                     pgpOnePassSignature.InitVerify(validationKey);
 
@@ -112,7 +112,7 @@ namespace PgpCoreM
                 Stream pgpLiteralStream = pgpLiteralData.GetInputStream();
 
                 // Verify against public key ID and that of any sub keys
-                if (EncryptionKeys.FindPublicKey(pgpSignature.KeyId) is PgpPublicKey publicKey)
+                if (EncryptionKeys.FindPublicVerifyKey(pgpSignature.KeyId) is PgpPublicKey publicKey)
                 {
                   
                     if (!verified)
@@ -266,7 +266,7 @@ namespace PgpCoreM
                     PgpPublicKey verifyKey = null;
                     for (int i = 0; i < pgpSignatureList.Count; i++)
                     {
-                        foreach (var key in EncryptionKeys.GetPublicKeys())
+                        foreach (var key in EncryptionKeys.GetPublicEncryptKeys())
                         {
                             if (pgpSignatureList[i].KeyId == key.KeyId)
                             {

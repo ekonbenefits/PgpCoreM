@@ -100,7 +100,7 @@ namespace PgpCoreM
                     foreach (PgpPublicKeyEncryptedData publicKeyEncryptedData in enc.GetEncryptedDataObjects())
                     {
                         isIntegrityProtected = publicKeyEncryptedData.IsIntegrityProtected();
-                        privateKey = EncryptionKeys.FindSecretKey(publicKeyEncryptedData.KeyId);
+                        privateKey = EncryptionKeys.FindSecretDecryptKey(publicKeyEncryptedData.KeyId);
 
                         if (privateKey != null)
                         {

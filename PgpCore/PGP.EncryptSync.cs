@@ -94,7 +94,7 @@ namespace PgpCoreM
             PgpEncryptedDataGenerator pk =
                 new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
 
-            foreach (var publicKey in EncryptionKeys.GetPublicKeys())
+            foreach (var publicKey in EncryptionKeys.GetPublicEncryptKeys())
             {
                 pk.AddMethod(publicKey);
             }

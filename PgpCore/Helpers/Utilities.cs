@@ -987,6 +987,11 @@ namespace PgpCoreM
 			return score;
 		}
 
+        public static bool IsSigningKey(this PgpPublicKey key)
+        {
+            return key.GetSignatures().Any(it => it.HasSubpackets && it.GetHashedSubPackets().GetKeyFlags() > 0);
+        }
+
 		/// <summary>
 		/// Scores the secret key for how suitable it is as a signing key
 		/// Master key += 1

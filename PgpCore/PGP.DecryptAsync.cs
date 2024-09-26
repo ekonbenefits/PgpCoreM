@@ -79,7 +79,7 @@ namespace PgpCoreM
                 {
                     foreach (var publicKeyEncryptedData in enc.GetEncryptedDataObjects().OfType<PgpPublicKeyEncryptedData>())
                     {
-                        privateKey = EncryptionKeys.FindSecretKey(publicKeyEncryptedData.KeyId);
+                        privateKey = EncryptionKeys.FindSecretDecryptKey(publicKeyEncryptedData.KeyId);
 
                         if (privateKey != null)
                         {
@@ -225,7 +225,7 @@ namespace PgpCoreM
             foreach (var publicKeyEncryptedData in
                      encryptedDataList.GetEncryptedDataObjects().OfType<PgpPublicKeyEncryptedData>())
             {
-                privateKey = EncryptionKeys.FindSecretKey(publicKeyEncryptedData.KeyId);
+                privateKey = EncryptionKeys.FindSecretDecryptKey(publicKeyEncryptedData.KeyId);
 
                 if (privateKey != null)
                 {
@@ -262,7 +262,7 @@ namespace PgpCoreM
             for (int i = 0; i < sList.Count; i++)
             {
                 var ops1 = sList[i];
-                verifyKey = EncryptionKeys.FindPublicKey(ops1.KeyId);
+                verifyKey = EncryptionKeys.FindPublicVerifyKey(ops1.KeyId);
                 if (verifyKey != null)
                 {
                     sigIndex = i;

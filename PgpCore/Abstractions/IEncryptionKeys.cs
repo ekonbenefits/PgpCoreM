@@ -14,25 +14,27 @@ namespace PgpCoreM
     public interface IEncryptionKeys
     {
      
-        long SigningKeyId { get;  }
-        long[] EncryptionKeyIds { get;  }
-
+        long SignKeyId { get;  }
+        long[] EncryptKeyIds { get;  }
     
 
-        PgpPublicKey FindPublicKey(long keyId);
+        PgpPublicKey FindPublicEncryptKey(long keyId);
 
-        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretKey(long keyId);
+        PgpPublicKey FindPublicVerifyKey(long keyId);
+
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretDecryptKey(long keyId);
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretSignKey(long keyId);
     }
 
 
     public static class ExtIEncryptionKeys
     {
-        public static IEnumerable<PgpPublicKey> GetPublicKeys(this IEncryptionKeys keys)
+        public static IEnumerable<PgpPublicKey> GetPublicEncryptKeys(this IEncryptionKeys keys)
         {
          
-            foreach (var keyIds in keys.EncryptionKeyIds)
+            foreach (var keyIds in keys.EncryptKeyIds)
             {
-                var publicKey = keys.FindPublicKey(keyIds);
+                var publicKey = keys.FindPublicEncryptKey(keyIds);
                 if (publicKey != null)
                 {
                     yield return publicKey;

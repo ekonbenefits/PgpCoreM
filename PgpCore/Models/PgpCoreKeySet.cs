@@ -40,31 +40,55 @@ public class PgpCoreKeySet : IEncryptionKeys
         return count;
     }
 
-    public long SigningKeyId
+    public long SignKeyId
     {
         get;
         set;
     }
 
-    public long[] EncryptionKeyIds
+    public long[] EncryptKeyIds
     {
         get;
         set;
     }
 
 
-    public PgpPublicKey FindPublicKey(long keyId)
+    public PgpPublicKey FindPublicEncryptKey(long keyId)
     {
-        if (_publicKeys.TryGetValue(keyId, out var publicKey))
+        if (_publicKeys.TryGetValue(keyId, out var publicKey)  && publicKey.IsEncryptionKey)
         {
             return publicKey;
         }
         return null;
     }
 
-    public (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretKey(long keyId)
+    public PgpPublicKey FindPublicVerifyKey(long keyId)
     {
-        if (_privateKeys.TryGetValue(keyId, out var priKey) && _secretKeys.TryGetValue(keyId, out var secKey))
+        if (_publicKeys.TryGetValue(keyId, out var publicKey) && publicKey.IsSigningKey()) 
+        {
+            return publicKey;
+        }
+        return null;
+    }
+
+    public (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretDecryptKey(long keyId)
+    {
+        if (_privateKeys.TryGetValue(keyId, out var priKey)
+            && _secretKeys.TryGetValue(keyId, out var secKey)
+            && secKey.PublicKey.IsEncryptionKey)
+        {
+            return (priKey, secKey);
+        }
+
+        return null;
+    }
+
+    public (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? FindSecretSignKey(long keyId)
+    {
+        if (_privateKeys.TryGetValue(keyId, out var priKey)
+            && _secretKeys.TryGetValue(keyId, out var secKey)
+            && secKey.PublicKey.IsSigningKey()
+            )
         {
             return (priKey, secKey);
         }

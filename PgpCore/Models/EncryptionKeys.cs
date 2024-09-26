@@ -403,40 +403,54 @@ namespace PgpCoreM
 
 		#region Public Methods
 
-        public long SigningKeyId => SigningPrivateKey.KeyId;
+        public long SignKeyId => SigningPrivateKey.KeyId;
 
-        public long[] EncryptionKeyIds => _encryptKeys.Value.Select(it=>it.KeyId).ToArray();
+        public long[] EncryptKeyIds => _encryptKeys.Value.Select(it=>it.KeyId).ToArray();
 
-        public PgpPublicKey FindPublicKey(long keyId)
+        public PgpPublicKey FindPublicEncryptKey(long keyId)
         {
-            if (SecretKey?.PublicKey.KeyId == keyId)
-            {
-                return SecretKey.PublicKey;
-            }
-
+      
 			var result = EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
-            result ??= VerificationKeys.FirstOrDefault(it => it.KeyId == keyId);
 
             return result;
 
         }
 
-        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretKey(long keyId)
+        public PgpPublicKey FindPublicVerifyKey(long keyId)
+        {
+
+            var result = EncryptKeys.FirstOrDefault(it => it.KeyId == keyId);
+
+            return result;
+
+        }
+
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretDecryptKey(long keyId)
         {
             PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
 
-			if (pgpSecKey == null)
+			if (pgpSecKey == null || !pgpSecKey.PublicKey.IsEncryptionKey)
                 return null;
 
 			return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
         }
 
-		/// <summary>
-		/// This method will try to find the key with the given keyId in a key ring and set it as the preferred key.
-		/// If it cannot find the key, it will not change the preferred key.
-		/// </summary>
-		/// <param name="keyId">The keyId to find.</param>
-		public void UseEncryptionKey(long keyId)
+        (PgpPrivateKey PrivateKey, PgpSecretKey SecretKey)? IEncryptionKeys.FindSecretSignKey(long keyId)
+        {
+            PgpSecretKey pgpSecKey = SecretKeys.GetSecretKey(keyId);
+
+            if (pgpSecKey == null || !pgpSecKey.PublicKey.IsSigningKey())
+                return null;
+
+            return (pgpSecKey.ExtractPrivateKey(_passPhrase.ToCharArray()), pgpSecKey);
+        }
+
+        /// <summary>
+        /// This method will try to find the key with the given keyId in a key ring and set it as the preferred key.
+        /// If it cannot find the key, it will not change the preferred key.
+        /// </summary>
+        /// <param name="keyId">The keyId to find.</param>
+        public void UseEncryptionKey(long keyId)
 		{
 			foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in PublicKeyRings)
 			{
