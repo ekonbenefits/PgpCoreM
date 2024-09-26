@@ -131,7 +131,7 @@ namespace PgpCoreM
                 }
             }
             else
-                throw new PgpException("Message is not a encrypted and signed file or simple signed file.");
+                verified = false;
 
             outputStream.Flush();
             outputStream.Seek(0, SeekOrigin.Begin);

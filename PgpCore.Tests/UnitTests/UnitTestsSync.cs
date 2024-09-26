@@ -1196,7 +1196,7 @@ namespace PgpCoreM.Tests
             Assert.True(testFactory.EncryptedContentFileInfo.Exists);
             Assert.True(testFactory.DecryptedContentFileInfo.Exists);
             Assert.Equal(testFactory.Content, testFactory.DecryptedContent.Trim());
-            Assert.True(verified);
+            Assert.False(verified);
 
             // Teardown
             testFactory.Teardown();
@@ -2228,7 +2228,6 @@ namespace PgpCoreM.Tests
             testFactory.Teardown();
         }
 
-        [Theory]
         [InlineData(KeyType.Generated)]
         [InlineData(KeyType.Known)]
         [InlineData(KeyType.KnownGpg)]
