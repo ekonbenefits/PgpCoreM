@@ -68,27 +68,14 @@ namespace PgpCoreM
             PgpObjectFactory factory = new PgpObjectFactory(encodedFile);
             PgpObject pgpObject = factory.NextPgpObject();
 
-            if (pgpObject is PgpCompressedData)
+            if (pgpObject is PgpCompressedData cData)
             {
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKeyEncryptedData(encodedFile);
+                Stream compDataIn = cData.GetDataStream();
+                factory = new PgpObjectFactory(compDataIn);
+                pgpObject = factory.NextPgpObject();
+            }
 
-                // Verify against public key ID and that of any sub keys
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                verified = EncryptionKeys.FindPublicVerifyKey(keyIdToVerify) != null;
-            }
-            else if (pgpObject is PgpEncryptedDataList dataList)
-            {
-                if (throwIfEncrypted)
-                {
-                    throw new ArgumentException("Input is encrypted. Decrypt the input first.");
-                }
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKey(dataList);
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                // If we encounter an encrypted packet, verify with the encryption keys used instead
-                // TODO does this even make sense? maybe throw exception instead, or try to decrypt first
-                verified = EncryptionKeys.FindPublicVerifyKey(keyIdToVerify) != null;
-            }
-            else if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
+            if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
             {
                 PgpOnePassSignature pgpOnePassSignature = onePassSignatureList[0];
                 PgpLiteralData pgpLiteralData = (PgpLiteralData)factory.NextPgpObject();
@@ -286,14 +273,31 @@ namespace PgpCoreM
                     // Get public key from correctly positioned stream and initialise for verification
                     PgpObjectFactory pgpObjectFactory = new PgpObjectFactory(armoredInputStream);
                     PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpObjectFactory.NextPgpObject();
-                    PgpSignature pgpSignature = pgpSignatureList[0];
-                    var key = EncryptionKeys.FindPublicVerifyKey(pgpSignature.KeyId);
-                    if (key == null)
+                    PgpSignature pgpSignature = null;
+                    PgpPublicKey verifyKey = null;
+                    for (int i = 0; i < pgpSignatureList.Count; i++)
                     {
-                        throw new PgpException("Signature verification failed. Public key not found.");
+                        verifyKey = EncryptionKeys.FindPublicVerifyKey(pgpSignatureList[i].KeyId);
+
+                        if (verifyKey != null)
+                        {
+                            pgpSignature = pgpSignatureList[i];
+                            break;
+                        }
                     }
 
-                    pgpSignature.InitVerify(key);
+                    if (pgpSignature == null)
+                    {
+                        if (outputStream != null)
+                        {
+                            outStream.Position = 0;
+                            await outStream.CopyToAsync(outputStream);
+                        }
+
+                        return false;
+                    }
+
+                    pgpSignature.InitVerify(verifyKey);
 
                     // Read through message again and calculate signature
                     outStream.Position = 0;
