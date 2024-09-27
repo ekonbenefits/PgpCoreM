@@ -9,11 +9,25 @@ using System.IO;
 using PgpCoreM.Models;
 using Xunit;
 using System.Threading.Tasks;
+using PgpCoreM.Tests.UnitTests.Encrypt;
+using Xunit.Abstractions;
 
 namespace PgpCoreM.Tests.UnitTests.Decrypt
 {
+
+
+
+
     public class DecryptSync_File : TestBase
     {
+
+        private readonly ITestOutputHelper output;
+
+        public DecryptSync_File(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Theory]
         [InlineData(KeyType.Generated)]
         [InlineData(KeyType.Known)]
@@ -386,6 +400,113 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
             testFactory.Teardown();
             testFactory2.Teardown();
         }
+
+
+        [Fact]
+        public void Decrypt_DecryptEncryptedWithMultipleKeys_NewKeystore()
+        {
+            // Arrange
+            var sender = new TestFactory();
+            var receiver = new TestFactory();
+
+            sender.Arrange(KeyType.Generated, FileType.Known);
+            receiver.Arrange(KeyType.Generated, FileType.Known);
+
+
+
+            var crypterSet = new PgpCoreKeySet();
+            crypterSet.AddPublicKeys(receiver.PublicKeyStream);
+            crypterSet.AddPublicKeys(sender.PublicKeyStream);
+            crypterSet.AddSecretKeys(sender.PrivateKeyStream, sender.Password);
+
+            var decrypterset = new PgpCoreKeySet();
+            decrypterset.AddPublicKeys(sender.PublicKeyStream);
+            decrypterset.AddSecretKeys(receiver.PrivateKeyStream, receiver.Password);
+
+
+            PGP pgpEncrypt = new PGP(crypterSet);
+            PGP pgpDecrypt = new PGP(decrypterset);
+
+            // Act
+            pgpEncrypt.EncryptAfterSign(sender.ContentFileInfo, receiver.EncryptedContentFileInfo);
+            pgpDecrypt.DecryptAndVerify(receiver.EncryptedContentFileInfo, receiver.DecryptedContentFileInfo, out var originalFileName);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                receiver.EncryptedContentFileInfo.Exists.Should().BeTrue();
+                receiver.DecryptedContentFileInfo.Exists.Should().BeTrue();
+                File.ReadAllText(receiver.DecryptedContentFileInfo.FullName).Should().Be(sender.Content);
+                originalFileName.Should().Be(sender.ContentFileInfo.Name);
+
+
+            }
+            output.WriteLine(receiver.EncryptedContentFileInfo.FullName);
+            output.WriteLine(receiver.PrivateKeyFileInfo.FullName);
+            output.WriteLine(sender.PublicKeyFileInfo.FullName);
+            // Teardown
+          //  sender.Teardown();
+          //  receiver.Teardown();
+        }
+
+
+        [Fact(Skip="For Debugging Purposes")]
+        public void Decrypt_DecryptEncryptedWithMultipleKeys_NewKeystoreManual()
+        {
+            // Arrange
+            var sender = new TestFactory();
+     
+
+            sender.Arrange(KeyType.Generated, FileType.Known);
+
+            var receiverPublicInfo = new FileInfo(@"G:\pgp-scratch\receive-public.asc");
+            var receiverPrivateInfo = new FileInfo(@"G:\pgp-scratch\receive-private.asc");
+            var receiverPrivatePass = new FileInfo(@"G:\pgp-scratch\receive-private-pass.txt");
+            var manualSenderPublicKey =new FileInfo(@"G:\pgp-scratch\send-public.asc");
+            var crypterSet = new PgpCoreKeySet();
+            {
+                using var readStream = receiverPublicInfo.OpenRead();
+                crypterSet.AddPublicKeys(readStream);
+                crypterSet.AddPublicKeys(sender.PublicKeyStream);
+                crypterSet.AddSecretKeys(sender.PrivateKeyStream, sender.Password);
+            }
+
+            var decrypterset = new PgpCoreKeySet();
+            {
+                using var readStream = receiverPrivateInfo.OpenRead();
+                using var sendStream = manualSenderPublicKey.OpenRead();
+                decrypterset.AddPublicKeys(sender.PublicKeyStream);
+                decrypterset.AddPublicKeys(sendStream);
+                decrypterset.AddSecretKeys(readStream, File.ReadAllText(receiverPrivatePass.FullName));
+            }
+
+
+            PGP pgpEncrypt = new PGP(crypterSet);
+            PGP pgpDecrypt = new PGP(decrypterset);
+
+
+            var manualEncryptedFileInfo = new FileInfo(@"G:\pgp-scratch\test.csv.gpg");
+            // Act
+            // pgpEncrypt.EncryptAfterSign(sender.ContentFileInfo, sender.EncryptedContentFileInfo);
+            pgpDecrypt.DecryptAndVerify(manualEncryptedFileInfo, sender.DecryptedContentFileInfo, out var originalFileName);
+
+
+            var content = File.ReadAllText(@"G:\pgp-scratch\test.csv");
+            // Assert
+            using (new AssertionScope())
+            {
+                sender.DecryptedContentFileInfo.Exists.Should().BeTrue();
+                File.ReadAllText(sender.DecryptedContentFileInfo.FullName).Should().Be(content);
+                originalFileName.Should().Be("test.csv");
+            }
+            output.WriteLine(sender.EncryptedContentFileInfo.FullName);
+            output.WriteLine(sender.PublicKeyFileInfo.FullName);
+            // Teardown
+            //  sender.Teardown();
+            //  receiver.Teardown();
+        }
+
+
 
         [Theory]
         [InlineData(KeyType.Generated)]

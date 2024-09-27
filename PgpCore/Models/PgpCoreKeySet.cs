@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Org.BouncyCastle.Bcpg.OpenPgp;
@@ -27,13 +28,10 @@ public class PgpCoreKeySet : IKeySet
                 SignKeyId = secretKey.KeyId;
             }
 
-            _privateKeys.Add(secretKey.PublicKey.KeyId, secretKey.ExtractPrivateKey(password?.ToCharArray()));
-            _publicKeys.Add(secretKey.PublicKey.KeyId, secretKey.PublicKey);
+            _privateKeys[secretKey.PublicKey.KeyId] = secretKey.ExtractPrivateKey(password?.ToCharArray());
 
-            if (secretKey.PublicKey.IsEncryptionKey)
-            {
-                _encryptKeyIds.Add(secretKey.PublicKey.KeyId);
-            }
+            //add public key to keystore but not marking it as an encryptKeyId automatically
+            _publicKeys[secretKey.PublicKey.KeyId] = secretKey.PublicKey;
 
             count++;
         }
@@ -47,7 +45,7 @@ public class PgpCoreKeySet : IKeySet
         var count = 0;
         foreach (var publicKey in bundle.SelectMany(it => it.GetPublicKeys()))
         {
-            _publicKeys.Add(publicKey.KeyId, publicKey);
+            _publicKeys[publicKey.KeyId] = publicKey;
 
             if (publicKey.IsEncryptionKey)
             {
@@ -66,12 +64,7 @@ public class PgpCoreKeySet : IKeySet
         set;
     }
 
-    public long[] EncryptKeyIds
-    {
-        get;
-        set;
-    }
-
+    public long[] EncryptKeyIds => _encryptKeyIds.ToArray();
 
     public PgpPublicKey FindPublicEncryptKey(long keyId)
     {

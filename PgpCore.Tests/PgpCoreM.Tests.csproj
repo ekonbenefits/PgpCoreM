@@ -4,6 +4,7 @@
     <TargetFrameworks>net472;netcoreapp6.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
+	  <LangVersion>LATEST</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

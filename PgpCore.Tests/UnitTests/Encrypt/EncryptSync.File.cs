@@ -7,11 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using PgpCoreM.Models;
+using Xunit.Abstractions;
 
 namespace PgpCoreM.Tests.UnitTests.Encrypt
 {
     public class EncryptSync_File : TestBase
     {
+
+        private readonly ITestOutputHelper output;
+
+        public EncryptSync_File(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
+
         [Theory]
         [InlineData(KeyType.Generated)]
         [InlineData(KeyType.Known)]
@@ -266,7 +276,7 @@ namespace PgpCoreM.Tests.UnitTests.Encrypt
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
             PGP pgpEncrypt = new PGP(encryptionKeys);
             PGP pgpInspect = new PGP(inspectionKeys);
-
+            output.WriteLine(testFactoryEncrypt.EncryptedContentFileInfo.FullName);
             // Act
             pgpEncrypt.EncryptAfterSign(testFactoryEncrypt.ContentFileInfo, testFactoryEncrypt.EncryptedContentFileInfo);
 

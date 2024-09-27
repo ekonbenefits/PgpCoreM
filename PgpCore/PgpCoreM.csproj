@@ -10,10 +10,10 @@
     <PackageProjectUrl>https://github.com/ekonbenefits/PgpCoreM</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ekonbenefits/PgpCoreM</RepositoryUrl>
     <PackageTags>PGP .NET Core Modified</PackageTags>
-    <Version>7.1.0.0</Version>
-    <AssemblyVersion>7.1.0.0</AssemblyVersion>
-    <FileVersion>7.1.0</FileVersion>
-    <PackageReleaseNotes>v7.1.0 - Safer defaults than pgp core, major refactoring of properties, different key management</PackageReleaseNotes>
+    <Version>7.1.1.0</Version>
+    <AssemblyVersion>7.1.1.0</AssemblyVersion>
+    <FileVersion>7.1.1</FileVersion>
+    <PackageReleaseNotes>v7.1.1 - Safer defaults than pgp core, major refactoring of properties, different key management</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
