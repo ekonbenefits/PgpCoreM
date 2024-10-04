@@ -286,17 +286,27 @@ namespace PgpCoreM
             {
                 throw new InvalidDataException("Unable to Parse File.");
             }
-            var matchList  = plainFact.NextPgpObject() as PgpSignatureList;
-            if (matchList is null)
-            {
-                    throw new PgpException("File was not signed.");
-            }
+
             var unc = literalData.GetInputStream().DisposeWith(disposables);
+
             originalFileName = literalData.FileName;
             var ops = sList[sigIndex];
-            var match = matchList[sigIndex];
+          
             ops.InitVerify(verifyKey);
-            StreamHelper.PipeAllOnPassVerify(unc, outputStream, ops, match);
+
+            PgpSignature MatchSignature()
+            {
+                var matchList = plainFact.NextPgpObject() as PgpSignatureList;
+                if (matchList is null)
+                {
+                    throw new PgpException("File was not signed.");
+                }
+                var match = matchList[sigIndex];
+                return match;
+            }
+
+
+            StreamHelper.PipeAllOnPassVerify(unc, outputStream, ops, MatchSignature);
 
         }
 

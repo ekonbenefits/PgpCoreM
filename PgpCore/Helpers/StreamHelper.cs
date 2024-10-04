@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Utilities.IO;
+﻿using System;
+using Org.BouncyCastle.Utilities.IO;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace PgpCoreM.Helpers
             }
         }
 
-        public static void PipeAllOnPassVerify(Stream inStr, Stream outStr, PgpOnePassSignature ops, PgpSignature psig)
+        public static void PipeAllOnPassVerify(Stream inStr, Stream outStr, PgpOnePassSignature ops, Func<PgpSignature> psig)
         {
             byte[] bs = new byte[BufferSize];
             int numRead;
@@ -70,7 +71,7 @@ namespace PgpCoreM.Helpers
                 ops.Update(bs, 0, numRead);
             }
 
-            var verified = ops.Verify(psig);
+            var verified = ops.Verify(psig());
             if (!verified)
             {
                 throw new PgpException("Signature verification failed");
@@ -165,7 +166,7 @@ namespace PgpCoreM.Helpers
             }
         }
 
-        public static async Task PipeAllOnPassVerifyAsync(Stream inStr, Stream outStr, PgpOnePassSignature ops, PgpSignature psig)
+        public static async Task PipeAllOnPassVerifyAsync(Stream inStr, Stream outStr, PgpOnePassSignature ops, Func<PgpSignature> psig)
         {
             byte[] bs = new byte[BufferSize];
             int numRead;
@@ -176,7 +177,7 @@ namespace PgpCoreM.Helpers
             }
 
 
-            var verified = ops.Verify(psig);
+            var verified = ops.Verify(psig());
             if (!verified)
             {
                 throw new PgpException("Signature verification failed");
