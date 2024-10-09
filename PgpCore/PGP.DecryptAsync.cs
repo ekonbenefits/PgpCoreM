@@ -323,7 +323,11 @@ namespace PgpCoreM
                 for (int i = 0; i < lazyMatchesSign.Value.Count; i++)
                 {
                     var sig = lazyMatchesSign.Value[i];
-                    keyException.SignatureFullKeyIds.Add($"{BitConverter.ToString(sig.GetDigestPrefix()).Replace("-", "")}");
+                    //get the full fingerprint from the signature
+                    var subPacket = sig.GetHashedSubPackets();
+                    var fingerprint = subPacket.GetIssuerFingerprint();
+
+                    keyException.SignatureFullKeyIds.Add($"{BitConverter.ToString(fingerprint.GetFingerprint()).Replace("-", "")}");
                 }
                 throw keyException;
             }
