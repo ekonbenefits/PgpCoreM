@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using PgpCoreM.Abstractions;
@@ -219,7 +220,7 @@ namespace PgpCoreM
             }
 
             // If enc and message are null at this point, we failed to detect the contents of the encrypted stream.
-            if (encryptedDataList == null )
+            if (encryptedDataList == null)
                 throw new ArgumentException("Failed to detect encrypted content format.", nameof(inputStream));
 
             using CompositeDisposable disposables = new CompositeDisposable();
@@ -264,6 +265,7 @@ namespace PgpCoreM
 
             PgpPublicKey verifyKey = null;
             int sigIndex = 0;
+
             for (int i = 0; i < sList.Count; i++)
             {
                 var ops1 = sList[i];
@@ -275,13 +277,10 @@ namespace PgpCoreM
                 }
             }
 
-            if (verifyKey is null)
-            {
-                throw new PgpException("Failed to verify file.");
-            }
+       
 
 
-            var literalData  = plainFact.NextPgpObject() as PgpLiteralData;
+            var literalData = plainFact.NextPgpObject() as PgpLiteralData;
             if (literalData is null)
             {
                 throw new InvalidDataException("Unable to Parse File.");
@@ -290,23 +289,58 @@ namespace PgpCoreM
             var unc = literalData.GetInputStream().DisposeWith(disposables);
 
             originalFileName = literalData.FileName;
-            var ops = sList[sigIndex];
-          
-            ops.InitVerify(verifyKey);
+            PgpOnePassSignature ops = null;
+            if (verifyKey is not null)
+            {
+                ops = sList[sigIndex];
+
+                ops.InitVerify(verifyKey);
+            }
+
+
+            var lazyMatchesSign = new Lazy<PgpSignatureList>(() => plainFact.NextPgpObject() as PgpSignatureList);
+
 
             PgpSignature MatchSignature()
             {
-                var matchList = plainFact.NextPgpObject() as PgpSignatureList;
+            
+             
+                if (verifyKey is null)
+                {
+                    throw new PgpException("Failed to verify file.");
+                }
+
+                var matchList = lazyMatchesSign.Value;
+
+
                 if (matchList is null)
                 {
                     throw new PgpException("File was not signed.");
                 }
+
                 var match = matchList[sigIndex];
                 return match;
             }
 
+            try
+            {
+                StreamHelper.PipeAllOnPassVerify(unc, outputStream, ops, MatchSignature);
+            }
+            catch (PgpException ex)
+            {
+                if (lazyMatchesSign.Value is null)
+                {
+                    throw; //this should rethrow while preserving the stack trace
+                }
 
-            StreamHelper.PipeAllOnPassVerify(unc, outputStream, ops, MatchSignature);
+                var keyException = new PgpVerifyKeyException(ex.Message, ex);
+                for (int i = 0; i < lazyMatchesSign.Value.Count; i++)
+                {
+                    var sig = lazyMatchesSign.Value[i];
+                    keyException.SignatureFullKeyIds.Add($"{BitConverter.ToString(sig.GetDigestPrefix()).Replace("-", "")}");
+                }
+                throw keyException;
+            }
 
         }
 

@@ -270,12 +270,6 @@ namespace PgpCoreM
                 }
             }
 
-            if (verifyKey is null)
-            {
-                throw new PgpException("Failed to verify file.");
-            }
-
-
             var literalData = plainFact.NextPgpObject() as PgpLiteralData;
             if (literalData is null)
             {
@@ -284,12 +278,28 @@ namespace PgpCoreM
       
             var unc = literalData.GetInputStream().DisposeWith(disposables);
             var originalFileName = literalData.FileName;
-            var ops = sList[sigIndex];
-            ops.InitVerify(verifyKey);
+
+            PgpOnePassSignature ops = null;
+            if (verifyKey is not null)
+            {
+                ops = sList[sigIndex];
+
+                ops.InitVerify(verifyKey);
+            }
+
+            var lazyMatchesSign = new Lazy<PgpSignatureList>(() => plainFact.NextPgpObject() as PgpSignatureList);
+
 
             PgpSignature MatchSignature()
             {
-                var matchList = plainFact.NextPgpObject() as PgpSignatureList;
+
+                if (verifyKey is null)
+                {
+                    throw new PgpException("Failed to verify file.");
+                }
+
+                var matchList = lazyMatchesSign.Value;
+
                 if (matchList is null)
                 {
                     throw new PgpException("File was not signed.");
@@ -297,7 +307,27 @@ namespace PgpCoreM
                 var match = matchList[sigIndex];
                 return match;
             }
-            await StreamHelper.PipeAllOnPassVerifyAsync(unc, outputStream, ops, MatchSignature);
+
+            try
+            {
+                await StreamHelper.PipeAllOnPassVerifyAsync(unc, outputStream, ops, MatchSignature);
+            }
+            catch (PgpException ex)
+            {
+                if (lazyMatchesSign.Value is null)
+                {
+                    throw; //this should rethrow while preserving the stack trace
+                }
+
+                var keyException = new PgpVerifyKeyException(ex.Message, ex);
+                for (int i = 0; i < lazyMatchesSign.Value.Count; i++)
+                {
+                    var sig = lazyMatchesSign.Value[i];
+                    keyException.SignatureFullKeyIds.Add($"{BitConverter.ToString(sig.GetDigestPrefix()).Replace("-", "")}");
+                }
+                throw keyException;
+            }
+
             return originalFileName;
         }
 

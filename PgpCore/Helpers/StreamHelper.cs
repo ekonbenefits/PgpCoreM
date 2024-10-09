@@ -68,11 +68,12 @@ namespace PgpCoreM.Helpers
             while ((numRead = inStr.Read(bs, 0, bs.Length)) > 0)
             {
                 outStr.Write(bs, 0, numRead);
-                ops.Update(bs, 0, numRead);
+                ops?.Update(bs, 0, numRead);
             }
 
-            var verified = ops.Verify(psig());
-            if (!verified)
+            var sig = psig();
+            var verified = ops?.Verify(sig);
+            if (verified is false or null)
             {
                 throw new PgpException("Signature verification failed");
             }
@@ -172,13 +173,13 @@ namespace PgpCoreM.Helpers
             int numRead;
             while ((numRead = await inStr.ReadAsync(bs, 0, bs.Length)) > 0)
             {
-                ops.Update(bs, 0, numRead);
                 await outStr.WriteAsync(bs, 0, numRead);
+                ops?.Update(bs, 0, numRead);
             }
 
-
-            var verified = ops.Verify(psig());
-            if (!verified)
+            var sig = psig();
+            var verified = ops?.Verify(sig);
+            if (verified is false or null)
             {
                 throw new PgpException("Signature verification failed");
             }

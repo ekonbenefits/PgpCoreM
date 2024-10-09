@@ -570,7 +570,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             await pgpEncryptAndSign.EncryptAndSignAsync(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
-            var ex = await Assert.ThrowsAsync<PgpException>(async () => await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo));
+            var ex = await Assert.ThrowsAnyAsync<PgpException>(async () => await pgpDecryptAndVerify.DecryptAndVerifyAsync(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo));
 
             // Assert
             using (new AssertionScope())

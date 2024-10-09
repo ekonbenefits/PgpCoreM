@@ -696,7 +696,7 @@ namespace PgpCoreM.Tests.UnitTests.Decrypt
 
             // Act
             pgpEncryptAndSign.EncryptAfterSign(encryptTestFactory.ContentFileInfo, encryptTestFactory.EncryptedContentFileInfo);
-            var ex = Assert.Throws<PgpException>(() => pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out _));
+            var ex = Assert.ThrowsAny<PgpException>(() => pgpDecryptAndVerify.DecryptAndVerify(encryptTestFactory.EncryptedContentFileInfo, encryptTestFactory.DecryptedContentFileInfo, out _));
 
             // Assert
             using (new AssertionScope())
